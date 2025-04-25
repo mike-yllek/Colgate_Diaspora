@@ -1,5 +1,5 @@
 // You can change this to any password you want
-const CORRECT_PASSWORD = "colgate2018";
+const CORRECT_PASSWORD = "colgate2012";
 
 // Check if user is already authenticated
 function checkAuthentication() {
@@ -13,7 +13,16 @@ function checkPassword() {
     const passwordInput = document.getElementById('passwordInput');
     const errorMessage = document.getElementById('errorMessage');
     
-    if (passwordInput.value === CORRECT_PASSWORD) {
+    // Debug logging
+    console.log('Entered password:', passwordInput.value);
+    console.log('Expected password:', CORRECT_PASSWORD);
+    console.log('Lengths - Entered:', passwordInput.value.length, 'Expected:', CORRECT_PASSWORD.length);
+    console.log('Are they equal?:', passwordInput.value === CORRECT_PASSWORD);
+    
+    // Remove any whitespace from the input
+    const cleanPassword = passwordInput.value.trim();
+    
+    if (cleanPassword === CORRECT_PASSWORD) {
         // Store authentication state
         sessionStorage.setItem('authenticated', 'true');
         showMainContent();
@@ -36,5 +45,11 @@ document.getElementById('passwordInput').addEventListener('keypress', function(e
     }
 });
 
-// Check authentication when page loads
-document.addEventListener('DOMContentLoaded', checkAuthentication);
+// Add event listener for button click
+document.addEventListener('DOMContentLoaded', function() {
+    const button = document.querySelector('.login-form button');
+    if (button) {
+        button.addEventListener('click', checkPassword);
+    }
+    checkAuthentication();
+});
