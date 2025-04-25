@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Team Bios - Colgate Diaspora Fantasy League</title>
+  <link rel="stylesheet" href="css/styles.css">
+  <style>
+    .bio-container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 2rem;
+    }
+
+    .bio-entry {
+      display: flex;
+      align-items: flex-start;
+      margin-bottom: 3rem;
+      gap: 2rem;
+    }
+
+    /* Alternate layout for even entries */
+    .bio-entry:nth-child(even) {
+      flex-direction: row-reverse;
+    }
+
+    .bio-image {
+      width: 400px;
+      height: 400px;
+      object-fit: cover;
+      border-radius: 8px;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+
+    .bio-content {
+      flex: 1;
+      padding: 1rem;
+    }
+
+    .bio-content h2 {
+      margin: 0 0 1rem 0;
+      color: var(--primary-color);
+      font-size: 2rem;
+    }
+
+    .bio-content p {
+      margin: 0;
+      color: var(--text-color);
+      line-height: 1.6;
+    }
+
+    .back-button {
+      display: inline-block;
+      padding: 0.5rem 1rem;
+      margin: 1rem;
+      background-color: var(--primary-color);
+      color: white;
+      text-decoration: none;
+      border-radius: 4px;
+      transition: background-color 0.3s ease;
+    }
+
+    .back-button:hover {
+      background-color: var(--accent-color);
+    }
+
+    /* Responsive design */
+    @media (max-width: 768px) {
+      .bio-entry, .bio-entry:nth-child(even) {
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+      }
+
+      .bio-image {
+        width: 100%;
+        max-width: 300px;
+        height: 300px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <a href="index.html" class="back-button">← Back to Home</a>
+  <div class="bio-container">
+    <h1>Team Bios</h1>
+    
+    <div class="bio-entry">
+      <img src="Images/andy.jpeg" alt="Andy" class="bio-image">
+      <div class="bio-content">
+        <h2>Andy</h2>
+        <p>Team details and bio here...</p>
+      </div>
+    </div>
+
+    <div class="bio-entry">
+      <img src="Images/ben.jpg" alt="Ben" class="bio-image">
+      <div class="bio-content">
+        <h2>Ben</h2>
+        <p>Team details and bio here...</p>
+      </div>
+    </div>
+
+    <div class="bio-entry">
+      <img src="Images/bobby.jpeg" alt="Bobby" class="bio-image">
+      <div class="bio-content">
+        <h2>Bobby</h2>
+        <p>Team details and bio here...</p>
+      </div>
+    </div>
+
+    <div class="bio-entry">
+      <img src="Images/dave.jpeg" alt="Dave" class="bio-image">
+      <div class="bio-content">
+        <h2>Dave</h2>
+        <p>Team details and bio here...</p>
+      </div>
+    </div>
+
+    <div class="bio-entry">
+      <img src="Images/jack.jpg" alt="Jack" class="bio-image">
+      <div class="bio-content">
+        <h2>Jack</h2>
+        <p>Team details and bio here...</p>
+      </div>
+    </div>
+
+    <div class="bio-entry">
+      <img src="Images/joe.jpeg" alt="Joe" class="bio-image">
+      <div class="bio-content">
+        <h2>Joe</h2>
+        <p>Team details and bio here...</p>
+      </div>
+    </div>
+
+    <div class="bio-entry">
+      <img src="Images/kenley.jpeg" alt="Kenley" class="bio-image">
+      <div class="bio-content">
+        <h2>Kenley</h2>
+        <p>Team details and bio here...</p>
+      </div>
+    </div>
+
+    <div class="bio-entry">
+      <img src="Images/kiri.jpeg" alt="Kiri" class="bio-image">
+      <div class="bio-content">
+        <h2>Kiri</h2>
+        <p>Team details and bio here...</p>
+      </div>
+    </div>
+
+    <div class="bio-entry">
+      <img src="Images/mike.jpeg" alt="Mike" class="bio-image">
+      <div class="bio-content">
+        <h2>Mike</h2>
+        <p>Team details and bio here...</p>
+      </div>
+    </div>
+
+    <div class="bio-entry">
+      <img src="Images/ollie.jpeg" alt="Ollie" class="bio-image">
+      <div class="bio-content">
+        <h2>Ollie</h2>
+        <p>Team details and bio here...</p>
+      </div>
+    </div>
+  </div>
+</body>
+</html>
