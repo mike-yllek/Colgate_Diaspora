@@ -372,6 +372,38 @@
                 $('#allTimeTable').show();
             });
 
+            // Add the populateSeasonSelect function
+            function populateSeasonSelect() {
+                // Get unique seasons from leagueData
+                const seasons = [...new Set(leagueData.map(row => row.Season))]
+                    .filter(season => season) // Remove empty values
+                    .sort((a, b) => b - a);  // Sort descending
+
+                // Clear existing options
+                const select = $('#seasonSelect');
+                select.empty();
+
+                // Add "All Seasons" option
+                select.append($('<option>', {
+                    value: 'all',
+                    text: 'All Seasons'
+                }));
+
+                // Add options for each season
+                seasons.forEach(season => {
+                    select.append($('<option>', {
+                        value: season,
+                        text: season
+                    }));
+                });
+
+                // Add event listener for season selection
+                select.off('change').on('change', function() {
+                    const selectedSeason = $(this).val();
+                    filterBySeason(selectedSeason);
+                });
+            }
+
             // Start loading data
             console.log('Document ready, loading data...');
             loadData();
