@@ -174,7 +174,7 @@
                 }
             }
 
-            // Parse CSV text into array of objects
+            // Parse CSV text into array of objects for season data
             function parseCSV(csvText) {
                 const lines = csvText.trim().split('\n');
                 console.log('Number of lines:', lines.length);
@@ -190,23 +190,21 @@
                     .filter(line => line.trim())
                     .map(line => {
                         const values = line.split(',');
-                        const row = {
-                            Team: values[0] || 'NA',
-                            Wins: values[1] && values[1].trim() !== '' ? parseInt(values[1]) : 'NA',
-                            Losses: values[2] && values[2].trim() !== '' ? parseInt(values[2]) : 'NA',
-                            Ties: values[3] && values[3].trim() !== '' ? parseInt(values[3]) : 'NA',
-                            PointsFor: values[4] && values[4].trim() !== '' ? parseFloat(values[4]) : 'NA',
-                            PointsAgainst: values[5] && values[5].trim() !== '' ? parseFloat(values[5]) : 'NA',
-                            FAvergage: values[6] && values[6].trim() !== '' ? parseFloat(values[6]) : 'NA',
-                            AAverage: values[7] && values[7].trim() !== '' ? parseFloat(values[7]) : 'NA',
-                            Playoffs: values[8] ? values[8].trim() : 'NA',
-                            Championship: values[9] ? values[9].trim() : 'NA',
-                            Participated: values[10] ? values[10].trim() : 'NA',
-                            Season: values[11] ? values[11].trim() : 'NA'
+                        return {
+                            Team: values[0],
+                            Wins: parseInt(values[1]),
+                            Losses: parseInt(values[2]),
+                            Ties: parseInt(values[3]),
+                            PointsFor: parseFloat(values[6]),
+                            PointsAgainst: parseFloat(values[7]),
+                            FAvergage: parseFloat(values[8]),
+                            AAverage: parseFloat(values[9]),
+                            Playoffs: values[10] === '1' ? '1' : '0',
+                            Championship: values[11] === '1' ? '1' : '0',
+                            Season: values[4]
                         };
-                        return row;
                     })
-                    .filter(row => row.Team !== 'NA' && row.Season !== 'NA' && row.Participated === '1');
+                    .filter(row => row.Team && row.Team.trim() !== '');
             }
 
             // Process data for all-time standings
@@ -270,7 +268,7 @@
                     seasons.map(season => `<option value="${season}">${season}</option>`).join('');
             }
 
-            // Add this new function to load totals data
+            // Function to load totals data
             async function loadTotalsData() {
                 try {
                     const response = await fetch('data/Colgate_Diaspora_History_CSV_Long_Totals_2025.csv');
@@ -279,29 +277,29 @@
                     }
                     const csvText = await response.text();
                     
-                    // Parse the totals CSV
-                    const lines = csvText.trim().split('\n');
-                    const headers = lines[0].split(',');
-                    
-                    return lines.slice(1)
-                        .filter(line => line.trim())
+                    return csvText.trim()
+                        .split('\n')
+                        .filter(line => line.trim() && !line.startsWith(','))
                         .map(line => {
                             const values = line.split(',');
+                            if (!values[0] || !values[0].trim()) return null;
+                            
                             return {
-                                Team: values[0] || 'NA',
-                                Wins: values[1] && values[1].trim() !== '' ? parseInt(values[1]) : 'NA',
-                                Losses: values[2] && values[2].trim() !== '' ? parseInt(values[2]) : 'NA',
-                                Ties: values[3] && values[3].trim() !== '' ? parseInt(values[3]) : 'NA',
-                                Seasons: values[4] && values[4].trim() !== '' ? parseInt(values[4]) : 'NA',
-                                WinPercentage: values[5] && values[5].trim() !== '' ? values[5] : 'NA',
-                                PointsFor: values[6] && values[6].trim() !== '' ? parseFloat(values[6]) : 'NA',
-                                PointsAgainst: values[7] && values[7].trim() !== '' ? parseFloat(values[7]) : 'NA',
-                                FAverageTotal: values[8] && values[8].trim() !== '' ? parseFloat(values[8]) : 'NA',
-                                AAverageTotal: values[9] && values[9].trim() !== '' ? parseFloat(values[9]) : 'NA',
-                                PlayoffAppearances: values[10] && values[10].trim() !== '' ? parseInt(values[10]) : 'NA',
-                                Championships: values[11] && values[11].trim() !== '' ? parseInt(values[11]) : 'NA'
+                                Team: values[0].trim(),
+                                Wins: parseInt(values[1]),
+                                Losses: parseInt(values[2]),
+                                Ties: parseInt(values[3]),
+                                Seasons: parseInt(values[4]),
+                                WinPercentage: parseFloat(values[5]),
+                                PointsFor: parseFloat(values[6]),
+                                PointsAgainst: parseFloat(values[7]),
+                                FAverageTotal: parseFloat(values[8]),
+                                AAverageTotal: parseFloat(values[9]),
+                                PlayoffAppearances: parseInt(values[10]),
+                                Championships: parseInt(values[11])
                             };
-                        });
+                        })
+                        .filter(row => row !== null);
                 } catch (error) {
                     console.error('Error loading totals data:', error);
                     showError('Error loading totals data: ' + error.message);
@@ -309,8 +307,8 @@
                 }
             }
 
-            // Modify the initializeTables function
-            async function initializeTables() {
+            // Update the initializeTables function
+            function initializeTables() {
                 console.log('Initializing tables...');
                 try {
                     // Season Table
@@ -318,41 +316,24 @@
                         data: leagueData,
                         columns: [
                             { data: 'Team' },
-                            { 
-                                data: 'Wins',
-                                render: value => value === 'NA' ? 'NA' : value
-                            },
-                            { 
-                                data: 'Losses',
-                                render: value => value === 'NA' ? 'NA' : value
-                            },
-                            { 
-                                data: 'Ties',
-                                render: value => value === 'NA' ? 'NA' : value
-                            },
-                            { 
-                                data: 'PointsFor',
-                                render: value => value === 'NA' ? 'NA' : value.toFixed(1)
-                            },
-                            { 
-                                data: 'PointsAgainst',
-                                render: value => value === 'NA' ? 'NA' : value.toFixed(1)
-                            },
-                            { 
-                                data: 'FAvergage',
-                                render: value => value === 'NA' ? 'NA' : value.toFixed(1)
-                            },
-                            { 
-                                data: 'AAverage',
-                                render: value => value === 'NA' ? 'NA' : value.toFixed(1)
-                            },
+                            { data: 'Wins' },
+                            { data: 'Losses' },
+                            { data: 'Ties' },
+                            { data: 'PointsFor' },
+                            { data: 'PointsAgainst' },
+                            { data: 'FAvergage' },
+                            { data: 'AAverage' },
                             { 
                                 data: 'Playoffs',
-                                render: value => value === 'NA' ? 'NA' : (value === '1' ? 'Yes' : 'No')
+                                render: function(data) {
+                                    return data === '1' ? 'Yes' : 'No';
+                                }
                             },
                             { 
                                 data: 'Championship',
-                                render: value => value === 'NA' ? 'NA' : (value === '1' ? 'Yes' : 'No')
+                                render: function(data) {
+                                    return data === '1' ? 'Yes' : 'No';
+                                }
                             },
                             { data: 'Season' }
                         ],
@@ -366,7 +347,7 @@
                         filterBySeason(selectedSeason);
                     });
 
-                    // Load and initialize All-Time Standings Table with totals data
+                    // All-Time Standings Table
                     const totalsData = await loadTotalsData();
                     const standingsTable = $('#standingsData').DataTable({
                         data: totalsData,
@@ -376,22 +357,19 @@
                             { data: 'Losses' },
                             { data: 'Ties' },
                             { data: 'Seasons' },
-                            { data: 'WinPercentage' },
                             { 
-                                data: 'PointsFor',
-                                render: value => value === 'NA' ? 'NA' : parseFloat(value).toFixed(1)
+                                data: 'WinPercentage',
+                                render: value => (value * 100).toFixed(1) + '%'
                             },
-                            { 
-                                data: 'PointsAgainst',
-                                render: value => value === 'NA' ? 'NA' : parseFloat(value).toFixed(1)
-                            },
+                            { data: 'PointsFor' },
+                            { data: 'PointsAgainst' },
                             { 
                                 data: 'FAverageTotal',
-                                render: value => value === 'NA' ? 'NA' : parseFloat(value).toFixed(1)
+                                render: value => value.toFixed(1)
                             },
                             { 
                                 data: 'AAverageTotal',
-                                render: value => value === 'NA' ? 'NA' : parseFloat(value).toFixed(1)
+                                render: value => value.toFixed(1)
                             },
                             { data: 'PlayoffAppearances' },
                             { data: 'Championships' }
