@@ -143,13 +143,45 @@
                 document.getElementById('error-message').textContent = message;
             }
 
-            // Function to filter table by season
+            // Define the populateSeasonSelect function first
+            function populateSeasonSelect() {
+                // Get unique seasons from leagueData
+                const seasons = [...new Set(leagueData.map(row => row.Season))]
+                    .filter(season => season) // Remove empty values
+                    .sort((a, b) => b - a);  // Sort descending
+
+                // Clear existing options
+                const select = $('#seasonSelect');
+                select.empty();
+
+                // Add "All Seasons" option
+                select.append($('<option>', {
+                    value: 'all',
+                    text: 'All Seasons'
+                }));
+
+                // Add options for each season
+                seasons.forEach(season => {
+                    select.append($('<option>', {
+                        value: season,
+                        text: season
+                    }));
+                });
+
+                // Add event listener for season selection
+                select.off('change').on('change', function() {
+                    const selectedSeason = $(this).val();
+                    filterBySeason(selectedSeason);
+                });
+            }
+
+            // Define the filterBySeason function
             function filterBySeason(season) {
-                const seasonTable = $('#seasonData').DataTable();
+                const table = $('#seasonData').DataTable();
                 if (season === 'all') {
-                    seasonTable.column(11).search('').draw();
+                    table.column(11).search('').draw();  // 11 is the Season column index
                 } else {
-                    seasonTable.column(11).search('^' + season + '$', true, false).draw();
+                    table.column(11).search('^' + season + '$', true, false).draw();
                 }
             }
 
@@ -190,6 +222,7 @@
                             const allTimeStats = parseAllTimeCSV(allTimeData);
                             console.log('All-time data loaded:', allTimeStats);
                             initializeTables(allTimeStats);
+                            // Call populateSeasonSelect after tables are initialized
                             populateSeasonSelect();
                         } catch (error) {
                             console.error('Error processing all-time data:', error);
@@ -297,8 +330,18 @@
                             { data: 'Ties' },
                             { data: 'PointsFor' },
                             { data: 'PointsAgainst' },
-                            { data: 'FAverageTotal' },
-                            { data: 'AAverageTotal' },
+                            { 
+                                data: 'FAverageTotal',
+                                render: function(data) { 
+                                    return parseFloat(data).toFixed(2); 
+                                }
+                            },
+                            { 
+                                data: 'AAverageTotal',
+                                render: function(data) { 
+                                    return parseFloat(data).toFixed(2); 
+                                }
+                            },
                             { data: 'Playoffs' },
                             { data: 'Championship' },
                             { data: 'Participated' },
@@ -371,38 +414,6 @@
                 $('#seasonTable').hide();
                 $('#allTimeTable').show();
             });
-
-            // Add the populateSeasonSelect function
-            function populateSeasonSelect() {
-                // Get unique seasons from leagueData
-                const seasons = [...new Set(leagueData.map(row => row.Season))]
-                    .filter(season => season) // Remove empty values
-                    .sort((a, b) => b - a);  // Sort descending
-
-                // Clear existing options
-                const select = $('#seasonSelect');
-                select.empty();
-
-                // Add "All Seasons" option
-                select.append($('<option>', {
-                    value: 'all',
-                    text: 'All Seasons'
-                }));
-
-                // Add options for each season
-                seasons.forEach(season => {
-                    select.append($('<option>', {
-                        value: season,
-                        text: season
-                    }));
-                });
-
-                // Add event listener for season selection
-                select.off('change').on('change', function() {
-                    const selectedSeason = $(this).val();
-                    filterBySeason(selectedSeason);
-                });
-            }
 
             // Start loading data
             console.log('Document ready, loading data...');
