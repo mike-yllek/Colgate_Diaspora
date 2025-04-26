@@ -174,7 +174,7 @@
                 }
             }
 
-            // Parse CSV text into array of objects for season data
+            // Parse CSV text into array of objects
             function parseCSV(csvText) {
                 const lines = csvText.trim().split('\n');
                 console.log('Number of lines:', lines.length);
@@ -195,13 +195,13 @@
                             Wins: parseInt(values[1]),
                             Losses: parseInt(values[2]),
                             Ties: parseInt(values[3]),
+                            Season: values[4],
                             PointsFor: parseFloat(values[6]),
                             PointsAgainst: parseFloat(values[7]),
                             FAvergage: parseFloat(values[8]),
                             AAverage: parseFloat(values[9]),
-                            Playoffs: values[10] === '1' ? '1' : '0',
-                            Championship: values[11] === '1' ? '1' : '0',
-                            Season: values[4]
+                            Playoffs: parseInt(values[10]) ? '1' : '0',
+                            Championship: parseInt(values[11]) ? '1' : '0'
                         };
                     })
                     .filter(row => row.Team && row.Team.trim() !== '');
@@ -279,11 +279,9 @@
                     
                     return csvText.trim()
                         .split('\n')
-                        .filter(line => line.trim() && !line.startsWith(','))
+                        .filter(line => line.trim() && line.split(',')[0].trim() !== '') // Only keep lines with a team name
                         .map(line => {
                             const values = line.split(',');
-                            if (!values[0] || !values[0].trim()) return null;
-                            
                             return {
                                 Team: values[0].trim(),
                                 Wins: parseInt(values[1]),
@@ -298,8 +296,7 @@
                                 PlayoffAppearances: parseInt(values[10]),
                                 Championships: parseInt(values[11])
                             };
-                        })
-                        .filter(row => row !== null);
+                        });
                 } catch (error) {
                     console.error('Error loading totals data:', error);
                     showError('Error loading totals data: ' + error.message);
@@ -307,8 +304,8 @@
                 }
             }
 
-            // Update the initializeTables function
-            function initializeTables() {
+            // Initialize DataTables
+            async function initializeTables() {
                 console.log('Initializing tables...');
                 try {
                     // Season Table
@@ -347,7 +344,7 @@
                         filterBySeason(selectedSeason);
                     });
 
-                    // All-Time Standings Table
+                    // Load and initialize All-Time Standings Table
                     const totalsData = await loadTotalsData();
                     const standingsTable = $('#standingsData').DataTable({
                         data: totalsData,
