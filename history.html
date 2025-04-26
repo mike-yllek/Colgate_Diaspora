@@ -4,10 +4,17 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>League History - Colgate Diaspora Fantasy League</title>
+    
+    <!-- jQuery first -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+    
+    <!-- DataTables CSS and JS -->
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.13.7/css/jquery.dataTables.css">
+    <script type="text/javascript" src="https://cdn.datatables.net/1.13.7/js/jquery.dataTables.js"></script>
+    
+    <!-- Your custom CSS -->
     <link rel="stylesheet" href="css/styles.css">
-    <!-- DataTables CSS -->
-    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.11.5/css/jquery.dataTables.css">
-    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/buttons/2.2.2/css/buttons.dataTables.min.css">
+    
     <style>
         .container {
             max-width: 1400px;
@@ -124,14 +131,6 @@
         </div>
     </div>
 
-    <!-- Load jQuery first -->
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    
-    <!-- Then load DataTables -->
-    <script src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.min.js"></script>
-    <script src="https://cdn.datatables.net/buttons/2.2.2/js/dataTables.buttons.min.js"></script>
-
-    <!-- Your custom JavaScript code -->
     <script>
         $(document).ready(function() {
             // This will store our parsed CSV data
