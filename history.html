@@ -142,6 +142,16 @@
                 document.getElementById('error-message').textContent = message;
             }
 
+            // Function to filter table by season
+            function filterBySeason(season) {
+                const seasonTable = $('#seasonData').DataTable();
+                if (season === 'all') {
+                    seasonTable.column(10).search('').draw();
+                } else {
+                    seasonTable.column(10).search('^' + season + '$', true, false).draw();
+                }
+            }
+
             // Function to load and parse CSV data
             async function loadData() {
                 try {
@@ -309,6 +319,12 @@
                         ],
                         pageLength: 15,
                         order: [[10, 'desc'], [1, 'desc']]
+                    });
+
+                    // Add event listener for season selection
+                    $('#seasonSelect').on('change', function() {
+                        const selectedSeason = $(this).val();
+                        filterBySeason(selectedSeason);
                     });
 
                     // All-Time Standings Table
