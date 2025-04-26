@@ -113,15 +113,15 @@
                 <thead>
                     <tr>
                         <th>Team</th>
+                        <th>Wins</th>
+                        <th>Losses</th>
+                        <th>Ties</th>
                         <th>Seasons</th>
-                        <th>Total Wins</th>
-                        <th>Total Losses</th>
-                        <th>Total Ties</th>
                         <th>Win %</th>
-                        <th>Total Points For</th>
-                        <th>Total Points Against</th>
-                        <th>Avg F-Average</th>
-                        <th>Avg A-Average</th>
+                        <th>Points For</th>
+                        <th>Points Against</th>
+                        <th>F-Average Total</th>
+                        <th>A-Average Total</th>
                         <th>Playoff Appearances</th>
                         <th>Championships</th>
                     </tr>
@@ -270,8 +270,47 @@
                     seasons.map(season => `<option value="${season}">${season}</option>`).join('');
             }
 
-            // Initialize DataTables
-            function initializeTables() {
+            // Add this new function to load totals data
+            async function loadTotalsData() {
+                try {
+                    const response = await fetch('data/Colgate_Diaspora_History_CSV_Long_Totals_2025.csv');
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! status: ${response.status}`);
+                    }
+                    const csvText = await response.text();
+                    
+                    // Parse the totals CSV
+                    const lines = csvText.trim().split('\n');
+                    const headers = lines[0].split(',');
+                    
+                    return lines.slice(1)
+                        .filter(line => line.trim())
+                        .map(line => {
+                            const values = line.split(',');
+                            return {
+                                Team: values[0] || 'NA',
+                                Wins: values[1] && values[1].trim() !== '' ? parseInt(values[1]) : 'NA',
+                                Losses: values[2] && values[2].trim() !== '' ? parseInt(values[2]) : 'NA',
+                                Ties: values[3] && values[3].trim() !== '' ? parseInt(values[3]) : 'NA',
+                                Seasons: values[4] && values[4].trim() !== '' ? parseInt(values[4]) : 'NA',
+                                WinPercentage: values[5] && values[5].trim() !== '' ? values[5] : 'NA',
+                                PointsFor: values[6] && values[6].trim() !== '' ? parseFloat(values[6]) : 'NA',
+                                PointsAgainst: values[7] && values[7].trim() !== '' ? parseFloat(values[7]) : 'NA',
+                                FAverageTotal: values[8] && values[8].trim() !== '' ? parseFloat(values[8]) : 'NA',
+                                AAverageTotal: values[9] && values[9].trim() !== '' ? parseFloat(values[9]) : 'NA',
+                                PlayoffAppearances: values[10] && values[10].trim() !== '' ? parseInt(values[10]) : 'NA',
+                                Championships: values[11] && values[11].trim() !== '' ? parseInt(values[11]) : 'NA'
+                            };
+                        });
+                } catch (error) {
+                    console.error('Error loading totals data:', error);
+                    showError('Error loading totals data: ' + error.message);
+                    return [];
+                }
+            }
+
+            // Modify the initializeTables function
+            async function initializeTables() {
                 console.log('Initializing tables...');
                 try {
                     // Season Table
@@ -327,45 +366,35 @@
                         filterBySeason(selectedSeason);
                     });
 
-                    // All-Time Standings Table
+                    // Load and initialize All-Time Standings Table with totals data
+                    const totalsData = await loadTotalsData();
                     const standingsTable = $('#standingsData').DataTable({
-                        data: Object.entries(allTimeStats).map(([team, stats]) => ({
-                            team,
-                            seasons: stats.seasons.size,
-                            wins: stats.wins,
-                            losses: stats.losses,
-                            ties: stats.ties,
-                            winPct: stats.validGames > 0 ? 
-                                ((stats.wins / stats.gamesPlayed) * 100).toFixed(1) + '%' : 
-                                'NA',
-                            pointsFor: stats.validScores > 0 ? 
-                                (stats.pointsFor / stats.validScores).toFixed(1) : 
-                                'NA',
-                            pointsAgainst: stats.validScores > 0 ? 
-                                (stats.pointsAgainst / stats.validScores).toFixed(1) : 
-                                'NA',
-                            fAverage: stats.validScores > 0 ? 
-                                (stats.fAverageTotal / stats.validScores).toFixed(1) : 
-                                'NA',
-                            aAverage: stats.validScores > 0 ? 
-                                (stats.aAverageTotal / stats.validScores).toFixed(1) : 
-                                'NA',
-                            playoffs: stats.playoffs,
-                            championships: stats.championships
-                        })),
+                        data: totalsData,
                         columns: [
-                            { data: 'team' },
-                            { data: 'seasons' },
-                            { data: 'wins' },
-                            { data: 'losses' },
-                            { data: 'ties' },
-                            { data: 'winPct' },
-                            { data: 'pointsFor' },
-                            { data: 'pointsAgainst' },
-                            { data: 'fAverage' },
-                            { data: 'aAverage' },
-                            { data: 'playoffs' },
-                            { data: 'championships' }
+                            { data: 'Team' },
+                            { data: 'Wins' },
+                            { data: 'Losses' },
+                            { data: 'Ties' },
+                            { data: 'Seasons' },
+                            { data: 'WinPercentage' },
+                            { 
+                                data: 'PointsFor',
+                                render: value => value === 'NA' ? 'NA' : parseFloat(value).toFixed(1)
+                            },
+                            { 
+                                data: 'PointsAgainst',
+                                render: value => value === 'NA' ? 'NA' : parseFloat(value).toFixed(1)
+                            },
+                            { 
+                                data: 'FAverageTotal',
+                                render: value => value === 'NA' ? 'NA' : parseFloat(value).toFixed(1)
+                            },
+                            { 
+                                data: 'AAverageTotal',
+                                render: value => value === 'NA' ? 'NA' : parseFloat(value).toFixed(1)
+                            },
+                            { data: 'PlayoffAppearances' },
+                            { data: 'Championships' }
                         ],
                         pageLength: 15,
                         order: [[11, 'desc'], [10, 'desc'], [5, 'desc']]
