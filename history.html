@@ -192,16 +192,16 @@
                         const values = line.split(',');
                         return {
                             Team: values[0],
-                            Wins: parseInt(values[1]),
-                            Losses: parseInt(values[2]),
-                            Ties: parseInt(values[3]),
-                            Season: values[4],
-                            PointsFor: parseFloat(values[6]),
-                            PointsAgainst: parseFloat(values[7]),
-                            FAvergage: parseFloat(values[8]),
-                            AAverage: parseFloat(values[9]),
-                            Playoffs: parseInt(values[10]) ? '1' : '0',
-                            Championship: parseInt(values[11]) ? '1' : '0'
+                            Wins: parseInt(values[1]) || 0,
+                            Losses: parseInt(values[2]) || 0,
+                            Ties: parseInt(values[3]) || 0,
+                            PointsFor: parseFloat(values[6]) || 0,
+                            PointsAgainst: parseFloat(values[7]) || 0,
+                            FAvergage: parseFloat(values[8]) || 0,
+                            AAverage: parseFloat(values[9]) || 0,
+                            Playoffs: values[10] ? values[10].trim() : '0',
+                            Championship: values[11] ? values[11].trim() : '0',
+                            Season: values[4]
                         };
                     })
                     .filter(row => row.Team && row.Team.trim() !== '');
@@ -223,40 +223,22 @@
                             championships: 0,
                             fAverageTotal: 0,
                             aAverageTotal: 0,
-                            gamesPlayed: 0,
-                            validGames: 0,
-                            validScores: 0
+                            gamesPlayed: 0
                         };
                     }
                     
                     const stats = acc[row.Team];
                     stats.seasons.add(row.Season);
-                    
-                    // Handle wins, losses, ties
-                    if (row.Wins !== 'NA') stats.wins += row.Wins;
-                    if (row.Losses !== 'NA') stats.losses += row.Losses;
-                    if (row.Ties !== 'NA') stats.ties += row.Ties;
-                    
-                    // Handle points and averages
-                    if (row.PointsFor !== 'NA') {
-                        stats.pointsFor += row.PointsFor;
-                        stats.validScores++;
-                    }
-                    if (row.PointsAgainst !== 'NA') {
-                        stats.pointsAgainst += row.PointsAgainst;
-                    }
-                    if (row.FAvergage !== 'NA') stats.fAverageTotal += row.FAvergage;
-                    if (row.AAverage !== 'NA') stats.aAverageTotal += row.AAverage;
-                    
-                    // Handle playoffs and championships
-                    if (row.Playoffs === '1') stats.playoffs++;
-                    if (row.Championship === '1') stats.championships++;
-                    
-                    // Count valid games
-                    if (row.Wins !== 'NA' && row.Losses !== 'NA' && row.Ties !== 'NA') {
-                        stats.gamesPlayed += row.Wins + row.Losses + row.Ties;
-                        stats.validGames++;
-                    }
+                    stats.wins += row.Wins;
+                    stats.losses += row.Losses;
+                    stats.ties += row.Ties;
+                    stats.pointsFor += row.PointsFor;
+                    stats.pointsAgainst += row.PointsAgainst;
+                    stats.playoffs += row.Playoffs === '1' ? 1 : 0;
+                    stats.championships += row.Championship === '1' ? 1 : 0;
+                    stats.fAverageTotal += row.FAvergage;
+                    stats.aAverageTotal += row.AAverage;
+                    stats.gamesPlayed += row.Wins + row.Losses + row.Ties;
                     
                     return acc;
                 }, {});
@@ -268,44 +250,8 @@
                     seasons.map(season => `<option value="${season}">${season}</option>`).join('');
             }
 
-            // Function to load totals data
-            async function loadTotalsData() {
-                try {
-                    const response = await fetch('data/Colgate_Diaspora_History_CSV_Long_Totals_2025.csv');
-                    if (!response.ok) {
-                        throw new Error(`HTTP error! status: ${response.status}`);
-                    }
-                    const csvText = await response.text();
-                    
-                    return csvText.trim()
-                        .split('\n')
-                        .filter(line => line.trim() && line.split(',')[0].trim() !== '') // Only keep lines with a team name
-                        .map(line => {
-                            const values = line.split(',');
-                            return {
-                                Team: values[0].trim(),
-                                Wins: parseInt(values[1]),
-                                Losses: parseInt(values[2]),
-                                Ties: parseInt(values[3]),
-                                Seasons: parseInt(values[4]),
-                                WinPercentage: parseFloat(values[5]),
-                                PointsFor: parseFloat(values[6]),
-                                PointsAgainst: parseFloat(values[7]),
-                                FAverageTotal: parseFloat(values[8]),
-                                AAverageTotal: parseFloat(values[9]),
-                                PlayoffAppearances: parseInt(values[10]),
-                                Championships: parseInt(values[11])
-                            };
-                        });
-                } catch (error) {
-                    console.error('Error loading totals data:', error);
-                    showError('Error loading totals data: ' + error.message);
-                    return [];
-                }
-            }
-
             // Initialize DataTables
-            async function initializeTables() {
+            function initializeTables() {
                 console.log('Initializing tables...');
                 try {
                     // Season Table
@@ -344,32 +290,37 @@
                         filterBySeason(selectedSeason);
                     });
 
-                    // Load and initialize All-Time Standings Table
-                    const totalsData = await loadTotalsData();
+                    // All-Time Standings Table
                     const standingsTable = $('#standingsData').DataTable({
-                        data: totalsData,
+                        data: Object.entries(allTimeStats).map(([team, stats]) => ({
+                            team,
+                            seasons: stats.seasons.size,
+                            wins: stats.wins,
+                            losses: stats.losses,
+                            ties: stats.ties,
+                            winPct: stats.gamesPlayed > 0 ? 
+                                ((stats.wins / stats.gamesPlayed) * 100).toFixed(1) + '%' : 
+                                '0.0%',
+                            pointsFor: (stats.pointsFor / stats.seasons.size).toFixed(1),
+                            pointsAgainst: (stats.pointsAgainst / stats.seasons.size).toFixed(1),
+                            fAverage: (stats.fAverageTotal / stats.seasons.size).toFixed(1),
+                            aAverage: (stats.aAverageTotal / stats.seasons.size).toFixed(1),
+                            playoffs: stats.playoffs,
+                            championships: stats.championships
+                        })),
                         columns: [
-                            { data: 'Team' },
-                            { data: 'Wins' },
-                            { data: 'Losses' },
-                            { data: 'Ties' },
-                            { data: 'Seasons' },
-                            { 
-                                data: 'WinPercentage',
-                                render: value => (value * 100).toFixed(1) + '%'
-                            },
-                            { data: 'PointsFor' },
-                            { data: 'PointsAgainst' },
-                            { 
-                                data: 'FAverageTotal',
-                                render: value => value.toFixed(1)
-                            },
-                            { 
-                                data: 'AAverageTotal',
-                                render: value => value.toFixed(1)
-                            },
-                            { data: 'PlayoffAppearances' },
-                            { data: 'Championships' }
+                            { data: 'team' },
+                            { data: 'seasons' },
+                            { data: 'wins' },
+                            { data: 'losses' },
+                            { data: 'ties' },
+                            { data: 'winPct' },
+                            { data: 'pointsFor' },
+                            { data: 'pointsAgainst' },
+                            { data: 'fAverage' },
+                            { data: 'aAverage' },
+                            { data: 'playoffs' },
+                            { data: 'championships' }
                         ],
                         pageLength: 15,
                         order: [[11, 'desc'], [10, 'desc'], [5, 'desc']]
