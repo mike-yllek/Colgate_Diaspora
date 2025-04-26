@@ -153,44 +153,73 @@
                 }
             }
 
-            // Load data from CSV file
+            // Load both season and all-time data
             function loadData() {
                 console.log('Loading data...');
+                
+                // Load season data
                 $.ajax({
-                    url: 'data/Colgate Diaspora - Sheet6.csv',
+                    url: 'data/Colgate_Diaspora_History_CSV_Long_Totals_2025.csv',
                     dataType: 'text',
-                    success: function(data) {
+                    success: function(seasonData) {
                         try {
-                            leagueData = parseCSV(data);
-                            console.log('Data loaded:', leagueData);
-                            calculateAllTimeStats();
-                            initializeTables();
-                            populateSeasonSelect();
+                            leagueData = parseSeasonCSV(seasonData);
+                            console.log('Season data loaded:', leagueData);
+                            
+                            // After season data is loaded, load all-time data
+                            loadAllTimeData();
                         } catch (error) {
-                            console.error('Error processing data:', error);
-                            showError('Error processing data: ' + error.message);
+                            console.error('Error processing season data:', error);
+                            showError('Error processing season data: ' + error.message);
                         }
                     },
                     error: function(xhr, status, error) {
-                        console.error('Error loading data:', error);
-                        showError('Error loading data: ' + error);
+                        console.error('Error loading season data:', error);
+                        showError('Error loading season data: ' + error);
                     }
                 });
             }
 
-            // Parse CSV text into array of objects
-            function parseCSV(csvText) {
+            // Load all-time standings data
+            function loadAllTimeData() {
+                $.ajax({
+                    url: 'data/Colgate_Diaspora_History_CSV_Long_Totals_2025_All-Time.csv',
+                    dataType: 'text',
+                    success: function(allTimeData) {
+                        try {
+                            const allTimeStats = parseAllTimeCSV(allTimeData);
+                            console.log('All-time data loaded:', allTimeStats);
+                            initializeTables(allTimeStats);
+                            populateSeasonSelect();
+                        } catch (error) {
+                            console.error('Error processing all-time data:', error);
+                            showError('Error processing all-time data: ' + error.message);
+                        }
+                    },
+                    error: function(xhr, status, error) {
+                        console.error('Error loading all-time data:', error);
+                        showError('Error loading all-time data: ' + error);
+                    }
+                });
+            }
+
+            // Parse season CSV data
+            function parseSeasonCSV(csvText) {
                 const lines = csvText.trim().split('\n');
-                console.log('Number of lines:', lines.length);
+                console.log('Number of season lines:', lines.length);
                 
                 if (lines.length < 2) {
-                    throw new Error('CSV file appears to be empty or malformed');
+                    throw new Error('Season CSV file appears to be empty or malformed');
                 }
 
-                return lines.slice(1)
+                return lines
                     .filter(line => line.trim())
                     .map(line => {
                         const values = line.split(',');
+                        // Skip rows where all numeric values are empty
+                        if (!values[1] && !values[2] && !values[3] && !values[4] && !values[5]) {
+                            return null;
+                        }
                         return {
                             Team: values[0],
                             Wins: parseInt(values[1]) || 0,
@@ -200,58 +229,47 @@
                             PointsAgainst: parseFloat(values[5]) || 0,
                             FAverageTotal: parseFloat(values[6]) || 0,
                             AAverageTotal: parseFloat(values[7]) || 0,
-                            Playoffs: values[8] || '',
-                            Championship: values[9] || '',
-                            Season: values[10] || ''
+                            Playoffs: values[8] || '0',
+                            Championship: values[9] || '0',
+                            Participated: values[10] || '0',
+                            Season: values[11] || ''
+                        };
+                    })
+                    .filter(row => row !== null);
+            }
+
+            // Parse all-time standings CSV data
+            function parseAllTimeCSV(csvText) {
+                const lines = csvText.trim().split('\n');
+                console.log('Number of all-time lines:', lines.length);
+                
+                if (lines.length < 2) {
+                    throw new Error('All-time CSV file appears to be empty or malformed');
+                }
+
+                return lines
+                    .filter(line => line.trim() && line.split(',')[0]) // Skip empty lines and lines with no team name
+                    .map(line => {
+                        const values = line.split(',');
+                        return {
+                            team: values[0],
+                            wins: parseInt(values[1]) || 0,
+                            losses: parseInt(values[2]) || 0,
+                            ties: parseInt(values[3]) || 0,
+                            seasons: parseInt(values[4]) || 0,
+                            winPct: values[5] || '0.000',
+                            pointsFor: parseFloat(values[6]) || 0,
+                            pointsAgainst: parseFloat(values[7]) || 0,
+                            fAverageTotal: parseFloat(values[8]) || 0,
+                            aAverageTotal: parseFloat(values[9]) || 0,
+                            playoffs: parseFloat(values[10]) || 0,
+                            championships: parseFloat(values[11]) || 0
                         };
                     });
             }
 
-            // Process data for all-time standings
-            function processData() {
-                console.log('Processing data...');
-                allTimeStats = leagueData.reduce((acc, row) => {
-                    if (!acc[row.Team]) {
-                        acc[row.Team] = {
-                            seasons: new Set(),
-                            wins: 0,
-                            losses: 0,
-                            ties: 0,
-                            pointsFor: 0,
-                            pointsAgainst: 0,
-                            playoffs: 0,
-                            championships: 0,
-                            fAverageTotal: 0,
-                            aAverageTotal: 0,
-                            gamesPlayed: 0
-                        };
-                    }
-                    
-                    const stats = acc[row.Team];
-                    stats.seasons.add(row.Season);
-                    stats.wins += row.Wins;
-                    stats.losses += row.Losses;
-                    stats.ties += row.Ties;
-                    stats.pointsFor += row.PointsFor;
-                    stats.pointsAgainst += row.PointsAgainst;
-                    stats.playoffs += row.Playoffs === '1' ? 1 : 0;
-                    stats.championships += row.Championship === '1' ? 1 : 0;
-                    stats.fAverageTotal += row.FAverageTotal;
-                    stats.aAverageTotal += row.AAverageTotal;
-                    stats.gamesPlayed += row.Wins + row.Losses + row.Ties;
-                    
-                    return acc;
-                }, {});
-
-                // Populate season filter
-                const seasons = [...new Set(leagueData.map(row => row.Season))].sort().reverse();
-                const select = document.getElementById('seasonSelect');
-                select.innerHTML = '<option value="all">All Seasons</option>' +
-                    seasons.map(season => `<option value="${season}">${season}</option>`).join('');
-            }
-
             // Initialize DataTables
-            function initializeTables() {
+            function initializeTables(allTimeStats) {
                 console.log('Initializing tables...');
                 try {
                     // Season Table
@@ -266,6 +284,7 @@
                         <th>A-average</th>
                         <th>playoffs?</th>
                         <th>championship</th>
+                        <th>Participated?</th>
                         <th>Season</th>
                     `);
 
@@ -282,9 +301,10 @@
                             { data: 'AAverageTotal' },
                             { data: 'Playoffs' },
                             { data: 'Championship' },
+                            { data: 'Participated' },
                             { data: 'Season' }
                         ],
-                        order: [[10, 'desc']], // Sort by Season by default
+                        order: [[11, 'desc']], // Sort by Season by default
                         pageLength: 25
                     });
 
@@ -294,7 +314,7 @@
                         filterBySeason(selectedSeason);
                     });
 
-                    // Update All-Time Standings table
+                    // All-Time Standings Table
                     $('#standingsData thead tr').html(`
                         <th>Team</th>
                         <th>w</th>
@@ -310,38 +330,21 @@
                         <th>Championship</th>
                     `);
 
-                    const standingsData = Object.entries(allTimeStats).map(([team, stats]) => ({
-                        team,
-                        wins: stats.wins,
-                        losses: stats.losses,
-                        ties: stats.ties,
-                        seasons: stats.seasons.size,
-                        winPct: stats.gamesPlayed > 0 ? 
-                            ((stats.wins / stats.gamesPlayed) * 100).toFixed(1) + '%' : 
-                            '0.0%',
-                        pointsFor: (stats.pointsFor / stats.seasons.size).toFixed(1),
-                        pointsAgainst: (stats.pointsAgainst / stats.seasons.size).toFixed(1),
-                        fAverageTotal: (stats.fAverageTotal / stats.seasons.size).toFixed(1),
-                        aAverageTotal: (stats.aAverageTotal / stats.seasons.size).toFixed(1),
-                        playoffs: stats.playoffs,
-                        championships: stats.championships
-                    }));
-
                     const standingsTable = $('#standingsData').DataTable({
-                        data: standingsData,
+                        data: allTimeStats,
                         columns: [
-                            { data: 'team', title: 'Team' },
-                            { data: 'wins', title: 'w' },
-                            { data: 'losses', title: 'l' },
-                            { data: 'ties', title: 't' },
-                            { data: 'seasons', title: 'Seasons' },
-                            { data: 'winPct', title: 'Win Percentage' },
-                            { data: 'pointsFor', title: 'PF' },
-                            { data: 'pointsAgainst', title: 'PA' },
-                            { data: 'fAverageTotal', title: 'F-average Tot' },
-                            { data: 'aAverageTotal', title: 'A-average Tot' },
-                            { data: 'playoffs', title: 'Playoff Appe' },
-                            { data: 'championships', title: 'Championship' }
+                            { data: 'team' },
+                            { data: 'wins' },
+                            { data: 'losses' },
+                            { data: 'ties' },
+                            { data: 'seasons' },
+                            { data: 'winPct', render: function(data) { return parseFloat(data).toFixed(3); } },
+                            { data: 'pointsFor' },
+                            { data: 'pointsAgainst' },
+                            { data: 'fAverageTotal', render: function(data) { return parseFloat(data).toFixed(2); } },
+                            { data: 'aAverageTotal', render: function(data) { return parseFloat(data).toFixed(2); } },
+                            { data: 'playoffs' },
+                            { data: 'championships' }
                         ],
                         pageLength: 15,
                         order: [[11, 'desc'], [10, 'desc'], [5, 'desc']]
