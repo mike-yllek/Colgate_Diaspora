@@ -153,26 +153,29 @@
                 }
             }
 
-            // Function to load and parse CSV data
-            async function loadData() {
-                try {
-                    console.log('Starting data load...');
-                    const response = await fetch('data/Colgate Diaspora - Sheet6.csv');
-                    if (!response.ok) {
-                        throw new Error(`HTTP error! status: ${response.status}`);
+            // Load data from CSV file
+            function loadData() {
+                console.log('Loading data...');
+                $.ajax({
+                    url: 'data/Colgate Diaspora - Sheet6.csv',
+                    dataType: 'text',
+                    success: function(data) {
+                        try {
+                            leagueData = parseCSV(data);
+                            console.log('Data loaded:', leagueData);
+                            calculateAllTimeStats();
+                            initializeTables();
+                            populateSeasonSelect();
+                        } catch (error) {
+                            console.error('Error processing data:', error);
+                            showError('Error processing data: ' + error.message);
+                        }
+                    },
+                    error: function(xhr, status, error) {
+                        console.error('Error loading data:', error);
+                        showError('Error loading data: ' + error);
                     }
-                    const csvText = await response.text();
-                    console.log('CSV loaded, first 100 chars:', csvText.substring(0, 100));
-                    
-                    leagueData = parseCSV(csvText);
-                    console.log('Parsed data:', leagueData.slice(0, 2));
-                    
-                    processData();
-                    initializeTables();
-                } catch (error) {
-                    console.error('Error loading data:', error);
-                    showError('Error loading data: ' + error.message);
-                }
+                });
             }
 
             // Parse CSV text into array of objects
@@ -184,26 +187,22 @@
                     throw new Error('CSV file appears to be empty or malformed');
                 }
 
-                const headers = lines[0].split(',');
-                console.log('Headers:', headers);
-
                 return lines.slice(1)
                     .filter(line => line.trim())
                     .map(line => {
                         const values = line.split(',');
                         return {
                             Team: values[0],
-                            Wins: parseInt(values[1]) || 0,  // w
-                            Losses: parseInt(values[2]) || 0, // l
-                            Ties: parseInt(values[3]) || 0,   // t
-                            PointsFor: parseFloat(values[4]) || 0,  // PF
-                            PointsAgainst: parseFloat(values[5]) || 0, // PA
-                            FAverageTotal: parseFloat(values[6]) || 0, // F-average
-                            AAverageTotal: parseFloat(values[7]) || 0, // A-average
-                            Playoffs: values[8] || '',        // playoffs?
-                            Championship: values[9] || '',     // championship
-                            Participated: values[10] || '',    // Participated?
-                            Season: values[11] || ''          // Season
+                            Wins: parseInt(values[1]) || 0,
+                            Losses: parseInt(values[2]) || 0,
+                            Ties: parseInt(values[3]) || 0,
+                            PointsFor: parseFloat(values[4]) || 0,
+                            PointsAgainst: parseFloat(values[5]) || 0,
+                            FAverageTotal: parseFloat(values[6]) || 0,
+                            AAverageTotal: parseFloat(values[7]) || 0,
+                            Playoffs: values[8] || '',
+                            Championship: values[9] || '',
+                            Season: values[10] || ''
                         };
                     });
             }
@@ -258,16 +257,15 @@
                     // Season Table
                     $('#seasonData thead tr').html(`
                         <th>Team</th>
-                        <th>W</th>
-                        <th>L</th>
-                        <th>T</th>
+                        <th>w</th>
+                        <th>l</th>
+                        <th>t</th>
                         <th>PF</th>
                         <th>PA</th>
                         <th>F-average</th>
                         <th>A-average</th>
-                        <th>Playoffs?</th>
-                        <th>Championship</th>
-                        <th>Participated?</th>
+                        <th>playoffs?</th>
+                        <th>championship</th>
                         <th>Season</th>
                     `);
 
@@ -284,10 +282,9 @@
                             { data: 'AAverageTotal' },
                             { data: 'Playoffs' },
                             { data: 'Championship' },
-                            { data: 'Participated' },
                             { data: 'Season' }
                         ],
-                        order: [[11, 'desc']], // Sort by Season by default
+                        order: [[10, 'desc']], // Sort by Season by default
                         pageLength: 25
                     });
 
