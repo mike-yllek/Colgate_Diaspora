@@ -192,17 +192,16 @@
                         const values = line.split(',');
                         return {
                             Team: values[0],
-                            w: parseInt(values[1]) || 0,
-                            l: parseInt(values[2]) || 0,
-                            t: parseInt(values[3]) || 0,
-                            PF: parseFloat(values[4]) || 0,
-                            PA: parseFloat(values[5]) || 0,
-                            'F-average': parseFloat(values[6]) || 0,
-                            'A-average': parseFloat(values[7]) || 0,
-                            'playoffs?': values[8],
-                            championship: values[9],
-                            'Participated?': values[10],
-                            Season: values[11]
+                            Wins: parseInt(values[1]) || 0,
+                            Losses: parseInt(values[2]) || 0,
+                            Ties: parseInt(values[3]) || 0,
+                            PointsFor: parseFloat(values[4]) || 0,
+                            PointsAgainst: parseFloat(values[5]) || 0,
+                            FAverageTotal: parseFloat(values[6]) || 0,
+                            AAverageTotal: parseFloat(values[7]) || 0,
+                            Playoffs: values[8] || '',
+                            Championship: values[9] || '',
+                            Season: values[10] || ''
                         };
                     });
             }
@@ -229,16 +228,16 @@
                     
                     const stats = acc[row.Team];
                     stats.seasons.add(row.Season);
-                    stats.wins += row.w;
-                    stats.losses += row.l;
-                    stats.ties += row.t;
-                    stats.pointsFor += row.PF;
-                    stats.pointsAgainst += row.PA;
-                    stats.playoffs += row['playoffs?'] === '1' ? 1 : 0;
-                    stats.championships += row.championship === '1' ? 1 : 0;
-                    stats.fAverageTotal += row['F-average'];
-                    stats.aAverageTotal += row['A-average'];
-                    stats.gamesPlayed += row.w + row.l + row.t;
+                    stats.wins += row.Wins;
+                    stats.losses += row.Losses;
+                    stats.ties += row.Ties;
+                    stats.pointsFor += row.PointsFor;
+                    stats.pointsAgainst += row.PointsAgainst;
+                    stats.playoffs += row.Playoffs === '1' ? 1 : 0;
+                    stats.championships += row.Championship === '1' ? 1 : 0;
+                    stats.fAverageTotal += row.FAverageTotal;
+                    stats.aAverageTotal += row.AAverageTotal;
+                    stats.gamesPlayed += row.Wins + row.Losses + row.Ties;
                     
                     return acc;
                 }, {});
@@ -255,33 +254,19 @@
                 console.log('Initializing tables...');
                 try {
                     // Season Table
-                    $('#seasonData thead tr').html(`
-                        <th>Team</th>
-                        <th>W</th>
-                        <th>L</th>
-                        <th>T</th>
-                        <th>PF</th>
-                        <th>PA</th>
-                        <th>F-average</th>
-                        <th>A-average</th>
-                        <th>Playoffs?</th>
-                        <th>Championship</th>
-                        <th>Season</th>
-                    `);
-
                     const seasonTable = $('#seasonData').DataTable({
                         data: leagueData,
                         columns: [
                             { data: 'Team' },
-                            { data: 'w' },
-                            { data: 'l' },
-                            { data: 't' },
-                            { data: 'PF' },
-                            { data: 'PA' },
-                            { data: 'F-average' },
-                            { data: 'A-average' },
-                            { data: 'playoffs?' },
-                            { data: 'championship' },
+                            { data: 'Wins' },
+                            { data: 'Losses' },
+                            { data: 'Ties' },
+                            { data: 'PointsFor' },
+                            { data: 'PointsAgainst' },
+                            { data: 'FAverageTotal' },
+                            { data: 'AAverageTotal' },
+                            { data: 'Playoffs' },
+                            { data: 'Championship' },
                             { data: 'Season' }
                         ],
                         order: [[10, 'desc']], // Sort by Season by default
@@ -295,29 +280,31 @@
                     });
 
                     // All-Time Standings Table
+                    const standingsData = Object.entries(allTimeStats).map(([team, stats]) => ({
+                        team,
+                        wins: stats.wins,
+                        losses: stats.losses,
+                        ties: stats.ties,
+                        seasons: stats.seasons.size,
+                        winPct: stats.gamesPlayed > 0 ? 
+                            ((stats.wins / stats.gamesPlayed) * 100).toFixed(1) + '%' : 
+                            '0.0%',
+                        pointsFor: (stats.pointsFor / stats.seasons.size).toFixed(1),
+                        pointsAgainst: (stats.pointsAgainst / stats.seasons.size).toFixed(1),
+                        fAverage: (stats.fAverageTotal / stats.seasons.size).toFixed(1),
+                        aAverage: (stats.aAverageTotal / stats.seasons.size).toFixed(1),
+                        playoffs: stats.playoffs,
+                        championships: stats.championships
+                    }));
+
                     const standingsTable = $('#standingsData').DataTable({
-                        data: Object.entries(allTimeStats).map(([team, stats]) => ({
-                            team,
-                            seasons: stats.seasons.size,
-                            wins: stats.wins,
-                            losses: stats.losses,
-                            ties: stats.ties,
-                            winPct: stats.gamesPlayed > 0 ? 
-                                ((stats.wins / stats.gamesPlayed) * 100).toFixed(1) + '%' : 
-                                '0.0%',
-                            pointsFor: (stats.pointsFor / stats.seasons.size).toFixed(1),
-                            pointsAgainst: (stats.pointsAgainst / stats.seasons.size).toFixed(1),
-                            fAverage: (stats.fAverageTotal / stats.seasons.size).toFixed(1),
-                            aAverage: (stats.aAverageTotal / stats.seasons.size).toFixed(1),
-                            playoffs: stats.playoffs,
-                            championships: stats.championships
-                        })),
+                        data: standingsData,
                         columns: [
                             { data: 'team' },
-                            { data: 'seasons' },
                             { data: 'wins' },
                             { data: 'losses' },
                             { data: 'ties' },
+                            { data: 'seasons' },
                             { data: 'winPct' },
                             { data: 'pointsFor' },
                             { data: 'pointsAgainst' },
