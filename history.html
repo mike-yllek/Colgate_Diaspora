@@ -115,9 +115,9 @@
                 <thead>
                     <tr>
                         <th>Team</th>
-                        <th>w</th>
-                        <th>l</th>
-                        <th>t</th>
+                        <th>W</th>
+                        <th>L</th>
+                        <th>T</th>
                         <th>Seasons</th>
                         <th>Win Percentage</th>
                         <th>PF</th>
@@ -138,12 +138,12 @@
                 <thead>
                     <tr>
                         <th>Team</th>
-                        <th>Points For Pct</th>
-                        <th>Points Against Pct</th>
+                        <th>Points For Power</th>
+                        <th>Points Against Power</th>
                         <th>Win Percent</th>
                         <th>Playoff Percent</th>
                         <th>Championship Percent</th>
-                        <th>Power</th>
+                        <th>Total Power</th>
                     </tr>
                 </thead>
                 <tbody></tbody>
@@ -284,7 +284,7 @@
                     throw new Error('Season CSV file appears to be empty or malformed');
                 }
 
-                return lines
+                const parsed = lines
                     .filter(line => line.trim())
                     .map(line => {
                         const values = line.split(',');
@@ -304,10 +304,14 @@
                             Playoffs: values[8] || '0',
                             Championship: values[9] || '0',
                             Participated: values[10] || '0',
-                            Season: values[11] || ''
+                            Season: values[11] ? values[11].trim() : ''
                         };
                     })
                     .filter(row => row !== null);
+                // Debug: log unique season values
+                const uniqueSeasons = [...new Set(parsed.map(row => row.Season))];
+                console.log('Unique seasons parsed:', uniqueSeasons);
+                return parsed;
             }
 
             // Parse all-time standings CSV data
