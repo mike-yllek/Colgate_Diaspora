@@ -114,17 +114,17 @@
                 <thead>
                     <tr>
                         <th>Team</th>
-                        <th>Wins</th>
-                        <th>Losses</th>
-                        <th>Ties</th>
+                        <th>w</th>
+                        <th>l</th>
+                        <th>t</th>
                         <th>Seasons</th>
-                        <th>Win %</th>
-                        <th>Points For</th>
-                        <th>Points Against</th>
-                        <th>F-Average Total</th>
-                        <th>A-Average Total</th>
-                        <th>Playoff Appearances</th>
-                        <th>Championships</th>
+                        <th>Win Percentage</th>
+                        <th>PF</th>
+                        <th>PA</th>
+                        <th>F-average Tot</th>
+                        <th>A-average Tot</th>
+                        <th>Playoff Appe</th>
+                        <th>Championship</th>
                     </tr>
                 </thead>
                 <tbody></tbody>
@@ -193,17 +193,17 @@
                         const values = line.split(',');
                         return {
                             Team: values[0],
-                            Wins: parseInt(values[1]) || 0,
-                            Losses: parseInt(values[2]) || 0,
-                            Ties: parseInt(values[3]) || 0,
-                            PointsFor: parseFloat(values[4]) || 0,
-                            PointsAgainst: parseFloat(values[5]) || 0,
-                            FAverageTotal: parseFloat(values[6]) || 0,
-                            AAverageTotal: parseFloat(values[7]) || 0,
-                            Playoffs: values[8] || '',
-                            Championship: values[9] || '',
-                            Season: values[10] || '',
-                            Participated: ''
+                            Wins: parseInt(values[1]) || 0,  // w
+                            Losses: parseInt(values[2]) || 0, // l
+                            Ties: parseInt(values[3]) || 0,   // t
+                            PointsFor: parseFloat(values[4]) || 0,  // PF
+                            PointsAgainst: parseFloat(values[5]) || 0, // PA
+                            FAverageTotal: parseFloat(values[6]) || 0, // F-average
+                            AAverageTotal: parseFloat(values[7]) || 0, // A-average
+                            Playoffs: values[8] || '',        // playoffs?
+                            Championship: values[9] || '',     // championship
+                            Participated: values[10] || '',    // Participated?
+                            Season: values[11] || ''          // Season
                         };
                     });
             }
@@ -297,7 +297,22 @@
                         filterBySeason(selectedSeason);
                     });
 
-                    // All-Time Standings Table
+                    // Update All-Time Standings table
+                    $('#standingsData thead tr').html(`
+                        <th>Team</th>
+                        <th>w</th>
+                        <th>l</th>
+                        <th>t</th>
+                        <th>Seasons</th>
+                        <th>Win Percentage</th>
+                        <th>PF</th>
+                        <th>PA</th>
+                        <th>F-average Tot</th>
+                        <th>A-average Tot</th>
+                        <th>Playoff Appe</th>
+                        <th>Championship</th>
+                    `);
+
                     const standingsData = Object.entries(allTimeStats).map(([team, stats]) => ({
                         team,
                         wins: stats.wins,
@@ -309,8 +324,8 @@
                             '0.0%',
                         pointsFor: (stats.pointsFor / stats.seasons.size).toFixed(1),
                         pointsAgainst: (stats.pointsAgainst / stats.seasons.size).toFixed(1),
-                        fAverage: (stats.fAverageTotal / stats.seasons.size).toFixed(1),
-                        aAverage: (stats.aAverageTotal / stats.seasons.size).toFixed(1),
+                        fAverageTotal: (stats.fAverageTotal / stats.seasons.size).toFixed(1),
+                        aAverageTotal: (stats.aAverageTotal / stats.seasons.size).toFixed(1),
                         playoffs: stats.playoffs,
                         championships: stats.championships
                     }));
@@ -318,18 +333,18 @@
                     const standingsTable = $('#standingsData').DataTable({
                         data: standingsData,
                         columns: [
-                            { data: 'team' },
-                            { data: 'wins' },
-                            { data: 'losses' },
-                            { data: 'ties' },
-                            { data: 'seasons' },
-                            { data: 'winPct' },
-                            { data: 'pointsFor' },
-                            { data: 'pointsAgainst' },
-                            { data: 'fAverage' },
-                            { data: 'aAverage' },
-                            { data: 'playoffs' },
-                            { data: 'championships' }
+                            { data: 'team', title: 'Team' },
+                            { data: 'wins', title: 'w' },
+                            { data: 'losses', title: 'l' },
+                            { data: 'ties', title: 't' },
+                            { data: 'seasons', title: 'Seasons' },
+                            { data: 'winPct', title: 'Win Percentage' },
+                            { data: 'pointsFor', title: 'PF' },
+                            { data: 'pointsAgainst', title: 'PA' },
+                            { data: 'fAverageTotal', title: 'F-average Tot' },
+                            { data: 'aAverageTotal', title: 'A-average Tot' },
+                            { data: 'playoffs', title: 'Playoff Appe' },
+                            { data: 'championships', title: 'Championship' }
                         ],
                         pageLength: 15,
                         order: [[11, 'desc'], [10, 'desc'], [5, 'desc']]
