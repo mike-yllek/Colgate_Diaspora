@@ -100,6 +100,7 @@
                         <th>A-average</th>
                         <th>Playoffs?</th>
                         <th>Championship</th>
+                        <th>Participated?</th>
                         <th>Season</th>
                     </tr>
                 </thead>
@@ -146,9 +147,9 @@
             function filterBySeason(season) {
                 const seasonTable = $('#seasonData').DataTable();
                 if (season === 'all') {
-                    seasonTable.column(10).search('').draw();
+                    seasonTable.column(11).search('').draw();
                 } else {
-                    seasonTable.column(10).search('^' + season + '$', true, false).draw();
+                    seasonTable.column(11).search('^' + season + '$', true, false).draw();
                 }
             }
 
@@ -201,7 +202,8 @@
                             AAverageTotal: parseFloat(values[7]) || 0,
                             Playoffs: values[8] || '',
                             Championship: values[9] || '',
-                            Season: values[10] || ''
+                            Participated: values[10] || '',
+                            Season: values[11] || ''
                         };
                     });
             }
@@ -254,6 +256,21 @@
                 console.log('Initializing tables...');
                 try {
                     // Season Table
+                    $('#seasonData thead tr').html(`
+                        <th>Team</th>
+                        <th>W</th>
+                        <th>L</th>
+                        <th>T</th>
+                        <th>PF</th>
+                        <th>PA</th>
+                        <th>F-average</th>
+                        <th>A-average</th>
+                        <th>Playoffs?</th>
+                        <th>Championship</th>
+                        <th>Participated?</th>
+                        <th>Season</th>
+                    `);
+
                     const seasonTable = $('#seasonData').DataTable({
                         data: leagueData,
                         columns: [
@@ -267,9 +284,10 @@
                             { data: 'AAverageTotal' },
                             { data: 'Playoffs' },
                             { data: 'Championship' },
+                            { data: 'Participated' },
                             { data: 'Season' }
                         ],
-                        order: [[10, 'desc']], // Sort by Season by default
+                        order: [[11, 'desc']], // Sort by Season by default
                         pageLength: 25
                     });
 
