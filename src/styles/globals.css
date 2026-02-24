@@ -1,0 +1,110 @@
+@import url('https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@400;700;900&family=Cinzel:wght@400;500;600;700&family=Rajdhani:wght@300;400;500;600;700&display=swap');
+
+/* ─── Design System Variables ─────────────────────────────────── */
+:root {
+  --maroon:       #6B1A2A;
+  --maroon-light: #9B2A3A;
+  --maroon-dark:  #3D0A14;
+  --gold:         #C8A84B;
+  --gold-light:   #E8CC7A;
+  --gold-bright:  #FFE066;
+  --cream:        #F5F0E8;
+  --dark:         #0D0508;
+
+  --font-display: 'Cinzel Decorative', serif;
+  --font-serif:   'Cinzel', serif;
+  --font-body:    'Rajdhani', sans-serif;
+
+  --card-radius:  12px;
+  --transition:   0.3s ease;
+}
+
+/* ─── Reset & Base ─────────────────────────────────────────────── */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background-color: var(--dark);
+  color: var(--cream);
+  font-family: var(--font-body);
+  font-size: 16px;
+  line-height: 1.6;
+  min-height: 100vh;
+  /* Subtle gold grid texture */
+  background-image:
+    linear-gradient(rgba(200, 168, 75, 0.04) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(200, 168, 75, 0.04) 1px, transparent 1px);
+  background-size: 40px 40px;
+  background-attachment: fixed;
+}
+
+/* ─── Typography ───────────────────────────────────────────────── */
+h1, h2, h3 {
+  font-family: var(--font-display);
+  color: var(--gold);
+}
+
+h4, h5, h6 {
+  font-family: var(--font-serif);
+  color: var(--gold-light);
+}
+
+a {
+  color: var(--gold);
+  text-decoration: none;
+  transition: color var(--transition);
+}
+
+a:hover {
+  color: var(--gold-bright);
+}
+
+/* ─── Scrollbar ────────────────────────────────────────────────── */
+::-webkit-scrollbar {
+  width: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--dark);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--maroon);
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--gold);
+}
+
+/* ─── Utility Classes ──────────────────────────────────────────── */
+.section-label {
+  font-family: var(--font-serif);
+  letter-spacing: 0.25em;
+  text-transform: uppercase;
+  color: var(--gold);
+}
+
+.font-display { font-family: var(--font-display); }
+.font-serif   { font-family: var(--font-serif); }
+.font-body    { font-family: var(--font-body); }
+
+/* ─── Gold Glow Effect ─────────────────────────────────────────── */
+.gold-glow {
+  text-shadow: 0 0 20px rgba(200, 168, 75, 0.6), 0 0 40px rgba(200, 168, 75, 0.3);
+}
+
+/* ─── Maroon Radial Background ─────────────────────────────────── */
+.maroon-glow-bg {
+  background:
+    radial-gradient(ellipse at 50% 0%, rgba(107, 26, 42, 0.4) 0%, transparent 60%),
+    radial-gradient(ellipse at 100% 50%, rgba(61, 10, 20, 0.3) 0%, transparent 50%),
+    radial-gradient(ellipse at 0% 80%, rgba(107, 26, 42, 0.2) 0%, transparent 50%);
+}

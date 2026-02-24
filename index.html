@@ -1,36 +1,13 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Colgate Diaspora Fantasy League</title>
-  <link rel="stylesheet" href="css/styles.css">
-  <link rel="stylesheet" href="css/login.css">
-  <script src="js/login.js" defer></script>
-</head>
-<body>
-  <!-- Login Overlay -->
-  <div id="loginOverlay" class="login-overlay">
-    <div class="login-container">
-      <h2>Welcome to Colgate Diaspora</h2>
-      <div class="login-form">
-        <input type="password" id="passwordInput" placeholder="Enter Password" />
-        <button onclick="checkPassword()">Enter</button>
-        <p id="errorMessage" class="error-message"></p>
-      </div>
-    </div>
-  </div>
-
-  <!-- Main Content (will be hidden initially) -->
-  <div id="mainContent" class="container" style="display: none;">
-    <h1>Welcome Champions!</h1>
-    <nav>
-      <a href="bios.html">Bios</a>
-      <a href="history.html">History & Stats</a>
-      <a href="podcast.html">Podcasts</a>
-      <a href="events.html">Events</a>
-    </nav>
-    <p>Stay tuned—more coming soon!</p>
-  </div>
-</body>
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>colgate-diaspora</title>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.jsx"></script>
+  </body>
 </html>

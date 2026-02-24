@@ -1,0 +1,15 @@
+{
+  "name": "colgate-diaspora-server",
+  "version": "1.0.0",
+  "description": "Oh Hell! WebSocket game server",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js",
+    "dev": "node --watch index.js"
+  },
+  "dependencies": {
+    "express": "^4.18.2",
+    "socket.io": "^4.7.2",
+    "cors": "^2.8.5"
+  }
+}
