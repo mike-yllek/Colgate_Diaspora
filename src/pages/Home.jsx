@@ -135,8 +135,22 @@ export default function Home() {
           justifyContent: 'center',
           flexWrap: 'wrap',
         }}>
-          {activeFeatured.map(m => (
-            <PokeCard key={m.id} member={m} />
+          {activeFeatured.map((m, i) => (
+            <PokeCard
+              key={m.id}
+              variant="member"
+              name={m.name}
+              role={m.role}
+              photo={m.photo}
+              flavorText={m.flavorText}
+              stats={[
+                { label: 'Class',   value: m.class.replace('Colgate ', '').replace('League ', '') },
+                { label: 'Seasons', value: '12+' },
+                { label: 'Status',  value: 'Active' },
+              ]}
+              cardNumber={String(i + 1).padStart(3, '0')}
+              season="2024"
+            />
           ))}
         </div>
       </section>

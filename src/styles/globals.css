@@ -101,6 +101,47 @@ a:hover {
   text-shadow: 0 0 20px rgba(200, 168, 75, 0.6), 0 0 40px rgba(200, 168, 75, 0.3);
 }
 
+/* ─── Holographic Card Border (@property enables smooth animation) */
+@property --angle {
+  syntax: '<angle>';
+  initial-value: 0deg;
+  inherits: false;
+}
+
+@keyframes spin-border {
+  to { --angle: 360deg; }
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0px); }
+  50%       { transform: translateY(-8px); }
+}
+
+@keyframes shimmer {
+  0%, 100% { opacity: 0.5; }
+  50%       { opacity: 1; }
+}
+
+.card-holo-border {
+  background: conic-gradient(
+    from var(--angle),
+    #ff0066, #ff7b00, #ffe066, #00ff95, #00b4ff, #8b5cf6, #ff0066
+  );
+  animation: spin-border 4s linear infinite;
+  padding: 3px;
+  border-radius: 15px;
+}
+
+.card-loser-border {
+  background: conic-gradient(
+    from var(--angle),
+    #1e1e1e, #3a3a3a, #2a2a2a, #3a3a3a, #1e1e1e
+  );
+  animation: spin-border 7s linear infinite;
+  padding: 2px;
+  border-radius: 15px;
+}
+
 /* ─── Maroon Radial Background ─────────────────────────────────── */
 .maroon-glow-bg {
   background:
