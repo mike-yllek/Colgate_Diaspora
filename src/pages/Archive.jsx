@@ -68,6 +68,22 @@ const worstToiletEntry = Object.entries(toiletCounts).sort((a, b) => b[1] - a[1]
 /* ── Unique champions ────────────────────────────────────────────────── */
 const uniqueChamps = new Set(Object.values(SEASONS).map(getChampion)).size
 
+/* ── Adjusted power rankings with -10% toilet penalty ───────────────── */
+const maxToilets = Math.max(...Object.values(toiletCounts), 1)
+const ADJUSTED_POWER = (() => {
+  const scored = POWER.map(p => {
+    const tc      = toiletCounts[p.team] || 0
+    const penalty = 0.1 * (tc / maxToilets)
+    return { ...p, toilets: tc, adjustedScore: p.power - penalty }
+  }).sort((a, b) => b.adjustedScore - a.adjustedScore)
+  const maxScore = scored[0].adjustedScore
+  return scored.map((p, i) => ({
+    ...p,
+    rank:           i + 1,
+    normalizedScore: p.adjustedScore / maxScore,
+  }))
+})()
+
 /* ── Sub-components ───────────────────────────────────────────────────── */
 
 function StatBadge({ value, label }) {
@@ -421,9 +437,15 @@ function PowerTab() {
         background: 'rgba(255,255,255,0.02)',
         border: '1px solid rgba(200,168,75,0.1)', borderRadius: '8px',
       }}>
-        {[['40%','Championships'],['30%','Playoff Appearances'],['20%','Win Rate'],['10%','Points Above Average']].map(([pct, label]) => (
+        {[
+          ['+40%', 'Championships',      'var(--gold)'],
+          ['+30%', 'Playoff Appearances', 'var(--gold)'],
+          ['+20%', 'Win Rate',            'var(--gold)'],
+          ['+10%', 'Points Above Avg',    'var(--gold)'],
+          ['−10%', 'Toilet Bowls',        'rgba(200,100,100,0.85)'],
+        ].map(([pct, label, color]) => (
           <span key={label} style={{ fontFamily: 'var(--font-body)', fontSize: '0.78rem', color: 'rgba(245,240,232,0.5)' }}>
-            <span style={{ color: 'var(--gold)', fontWeight: 600 }}>{pct}</span> {label}
+            <span style={{ color, fontWeight: 600 }}>{pct}</span> {label}
           </span>
         ))}
       </div>
@@ -440,11 +462,12 @@ function PowerTab() {
               <TH right>Playoff%</TH>
               <TH right>Win%</TH>
               <TH right>PF Avg</TH>
+              <TH right>🚽</TH>
               <TH>Power Score</TH>
             </tr>
           </thead>
           <tbody>
-            {POWER.map(p => {
+            {ADJUSTED_POWER.map(p => {
               const pfColor = p.pf_avg >= 0 ? 'var(--gold-light)' : 'rgba(200,100,100,0.8)'
               const pfStr   = `${p.pf_avg > 0 ? '+' : ''}${p.pf_avg}`
               return (
@@ -461,7 +484,10 @@ function PowerTab() {
                   <TD right faded>{p.playoff_pct}%</TD>
                   <TD right>{p.win_pct}%</TD>
                   <TD right style={{ color: pfColor }}>{pfStr}</TD>
-                  <TD><PowerBar value={p.power} /></TD>
+                  <TD right style={{ color: p.toilets > 0 ? 'rgba(200,100,100,0.75)' : 'rgba(245,240,232,0.2)' }}>
+                    {p.toilets > 0 ? p.toilets : '—'}
+                  </TD>
+                  <TD><PowerBar value={p.normalizedScore} /></TD>
                 </tr>
               )
             })}
