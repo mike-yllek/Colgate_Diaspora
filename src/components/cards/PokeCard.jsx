@@ -4,7 +4,7 @@ import { motion } from 'framer-motion'
 const TYPE_LABELS = {
   champion: '⭐ League Champion',
   loser:    '☠ Last Place',
-  member:   'Manager',
+  member:   '⚡ Member',
   alumni:   'Alumni',
 }
 
@@ -17,7 +17,9 @@ export default function PokeCard({
   stats       = [],
   record,
   cardNumber  = '001',
-  season      = '2024',
+  season      = '2025',
+  powerScore  = null,
+  typeLabel   = null,
 }) {
   const cardRef  = useRef(null)
   const [tilt, setTilt]       = useState({ x: 0, y: 0 })
@@ -113,7 +115,7 @@ export default function PokeCard({
                 textTransform: 'uppercase',
                 color: isChampion ? 'var(--gold)' : isLoser ? '#777' : 'var(--gold-light)',
               }}>
-                {TYPE_LABELS[variant]}
+                {typeLabel ?? TYPE_LABELS[variant]}
               </span>
               {record && (
                 <span style={{
@@ -173,7 +175,7 @@ export default function PokeCard({
                     width: '100%',
                     height: '100%',
                     objectFit: 'cover',
-                    objectPosition: 'top center',
+                    objectPosition: 'center center',
                     filter: isLoser ? 'grayscale(1) brightness(0.65)' : 'none',
                     display: 'block',
                   }}
@@ -191,6 +193,39 @@ export default function PokeCard({
                   opacity: 0.25,
                 }}>
                   {name?.[0] ?? '?'}
+                </div>
+              )}
+
+              {/* Power score badge */}
+              {powerScore != null && (
+                <div style={{
+                  position: 'absolute',
+                  top: '8px',
+                  right: '8px',
+                  width: '28px',
+                  height: '28px',
+                  borderRadius: '50%',
+                  background: (() => {
+                    const t = powerScore / 100
+                    const r = Math.round(107 + 93 * t)
+                    const g = Math.round(26  + 142 * t)
+                    const b = Math.round(42  + 33  * t)
+                    return `rgb(${r},${g},${b})`
+                  })(),
+                  border: '1.5px solid rgba(255,255,255,0.22)',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  fontSize: '0.54rem',
+                  fontFamily: 'var(--font-body)',
+                  fontWeight: 700,
+                  color: 'rgba(255,255,255,0.93)',
+                  boxShadow: '0 1px 6px rgba(0,0,0,0.6)',
+                  zIndex: 2,
+                  lineHeight: 1,
+                  letterSpacing: 0,
+                }}>
+                  {powerScore}
                 </div>
               )}
 

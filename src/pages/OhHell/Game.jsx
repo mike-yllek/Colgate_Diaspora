@@ -1,64 +1,10 @@
-import { useState, useEffect } from 'react'
-import { useParams, useLocation, useNavigate } from 'react-router-dom'
+import { useParams, useNavigate } from 'react-router-dom'
 import { motion, AnimatePresence } from 'framer-motion'
+import { useOhHell } from '../../hooks/useOhHell'
 import Scoreboard from './components/Scoreboard'
 import PlayerHand from './components/PlayerHand'
 import BidPanel from './components/BidPanel'
 import CardDeck from './components/CardDeck'
-
-// ─── Mock Data (one set per game phase) ──────────────────────────
-const PHASES = ['waiting', 'bidding', 'playing', 'round_end', 'game_end']
-
-const PLAYERS_WAITING = [
-  { name: 'You',   score: 0, bid: null, tricks: 0, joined: true  },
-  { name: 'Ollie', score: 0, bid: null, tricks: 0, joined: true  },
-  { name: 'Bobby', score: 0, bid: null, tricks: 0, joined: true  },
-  { name: 'Jack',  score: 0, bid: null, tricks: 0, joined: false },
-  { name: 'Joe',   score: 0, bid: null, tricks: 0, joined: false },
-]
-const PLAYERS_BIDDING = [
-  { name: 'You',   score: 42, bid: null, tricks: 0 },
-  { name: 'Ollie', score: 67, bid: 3,    tricks: 0 },
-  { name: 'Bobby', score: 23, bid: 1,    tricks: 0 },
-  { name: 'Jack',  score: 55, bid: null, tricks: 0 },
-  { name: 'Joe',   score: 89, bid: 2,    tricks: 0 },
-]
-const PLAYERS_PLAYING = [
-  { name: 'You',   score: 42, bid: 2, tricks: 1 },
-  { name: 'Ollie', score: 67, bid: 3, tricks: 2 },
-  { name: 'Bobby', score: 23, bid: 1, tricks: 1 },
-  { name: 'Jack',  score: 55, bid: 0, tricks: 0 },
-  { name: 'Joe',   score: 89, bid: 2, tricks: 3 },
-]
-const PLAYERS_ROUND_END = [
-  { name: 'You',   score: 54, bid: 2, tricks: 2, roundScore: 12, hit: true  },
-  { name: 'Ollie', score: 67, bid: 3, tricks: 1, roundScore: 0,  hit: false },
-  { name: 'Bobby', score: 34, bid: 1, tricks: 1, roundScore: 11, hit: true  },
-  { name: 'Jack',  score: 65, bid: 0, tricks: 0, roundScore: 10, hit: true  },
-  { name: 'Joe',   score: 89, bid: 2, tricks: 3, roundScore: 0,  hit: false },
-]
-const PLAYERS_GAME_END = [
-  { name: 'Joe',   score: 112, rank: 1 },
-  { name: 'Ollie', score: 95,  rank: 2 },
-  { name: 'Jack',  score: 87,  rank: 3 },
-  { name: 'You',   score: 74,  rank: 4 },
-  { name: 'Bobby', score: 58,  rank: 5 },
-]
-
-const MOCK_HAND = [
-  { suit: '♠', rank: 'A' },
-  { suit: '♥', rank: 'K' },
-  { suit: '♦', rank: '7' },
-  { suit: '♣', rank: 'J' },
-  { suit: '♠', rank: '4' },
-  { suit: '♥', rank: '9' },
-  { suit: '♣', rank: '2' },
-]
-const MOCK_TABLE_CARDS = [
-  { suit: '♥', rank: 'Q', player: 'Ollie' },
-  { suit: '♥', rank: '3', player: 'Bobby' },
-  { suit: '♥', rank: 'A', player: 'Joe'   },
-]
 
 const SUIT_COLORS = {
   '♠': '#2a2a3a',
@@ -217,7 +163,8 @@ function TrumpBadge({ suit }) {
 }
 
 // ─── WaitingRoom ──────────────────────────────────────────────────
-function WaitingRoom({ roomId, players }) {
+function WaitingRoom({ roomId, players, isHost, onStart }) {
+  const canStart = players.length >= 3
   return (
     <div style={{
       flex: 1,
@@ -264,23 +211,23 @@ function WaitingRoom({ roomId, players }) {
 
       <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem', width: '220px' }}>
         {players.map(p => (
-          <div key={p.name} style={{
+          <div key={p.id} style={{
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'space-between',
             padding: '0.5rem 0.8rem',
             borderRadius: '8px',
-            border: `1px solid ${p.joined ? 'rgba(200,168,75,0.28)' : 'rgba(200,168,75,0.08)'}`,
-            background: p.joined ? 'rgba(200,168,75,0.06)' : 'transparent',
+            border: `1px solid ${p.connected ? 'rgba(200,168,75,0.28)' : 'rgba(200,168,75,0.08)'}`,
+            background: p.connected ? 'rgba(200,168,75,0.06)' : 'transparent',
           }}>
             <span style={{
               fontFamily: 'var(--font-serif)',
               fontSize: '0.82rem',
-              color: p.joined ? 'var(--cream)' : 'rgba(200,168,75,0.28)',
+              color: p.connected ? 'var(--cream)' : 'rgba(200,168,75,0.28)',
             }}>
-              {p.name}
+              {p.name}{p.isHost ? ' ★' : ''}
             </span>
-            {p.joined ? (
+            {p.connected ? (
               <span style={{ fontSize: '0.8rem', color: 'var(--gold)', opacity: 0.7 }}>✓</span>
             ) : (
               <motion.span
@@ -300,6 +247,32 @@ function WaitingRoom({ roomId, players }) {
           </div>
         ))}
       </div>
+
+      {isHost && (
+        <button
+          onClick={onStart}
+          disabled={!canStart}
+          style={{
+            padding: '0.85rem 2.5rem',
+            borderRadius: '8px',
+            border: `1px solid ${canStart ? 'var(--gold)' : 'rgba(200,168,75,0.2)'}`,
+            background: canStart ? 'var(--maroon)' : 'transparent',
+            color: canStart ? 'var(--gold)' : 'rgba(200,168,75,0.3)',
+            fontFamily: 'var(--font-serif)',
+            fontSize: '0.8rem',
+            letterSpacing: '0.2em',
+            textTransform: 'uppercase',
+            cursor: canStart ? 'pointer' : 'not-allowed',
+            transition: 'background 0.2s ease',
+          }}
+          onMouseEnter={e => { if (canStart) e.currentTarget.style.background = 'var(--maroon-light)' }}
+          onMouseLeave={e => { if (canStart) e.currentTarget.style.background = canStart ? 'var(--maroon)' : 'transparent' }}
+        >
+          {canStart
+            ? 'Start Game'
+            : `Need ${3 - players.length} more player${3 - players.length !== 1 ? 's' : ''}`}
+        </button>
+      )}
     </div>
   )
 }
@@ -566,41 +539,60 @@ function GameOver({ players, onExit }) {
 
 // ─── Main Game Component ──────────────────────────────────────────
 export default function OhHellGame() {
-  const { roomId }   = useParams()
-  const { state }    = useLocation()
-  const navigate     = useNavigate()
-  const playerName   = state?.playerName || 'You'
+  const { roomId }  = useParams()
+  const navigate    = useNavigate()
 
-  const [phase, setPhase]           = useState('playing')
-  const [hand, setHand]             = useState(MOCK_HAND)
-  const [tableCards, setTableCards] = useState(MOCK_TABLE_CARDS)
+  const {
+    gameState,
+    myHand,
+    myPlayerId,
+    myTurnPhase,
+    roundSummary,
+    finalResult,
+    startGame,
+    placeBid,
+    playCard,
+    nextRound,
+  } = useOhHell()
 
-  // Reset hand/table when switching into playing phase
-  useEffect(() => {
-    if (phase === 'playing') {
-      setHand(MOCK_HAND)
-      setTableCards(MOCK_TABLE_CARDS)
-    }
-  }, [phase])
+  const phase        = gameState?.phase || 'waiting'
+  const players      = gameState?.players || []
+  const currentTrick = gameState?.currentTrick || []
+  const trump        = gameState?.trump
 
-  const getPlayers = () => {
-    switch (phase) {
-      case 'waiting':   return PLAYERS_WAITING
-      case 'bidding':   return PLAYERS_BIDDING
-      case 'playing':   return PLAYERS_PLAYING
-      case 'round_end': return PLAYERS_ROUND_END
-      case 'game_end':  return PLAYERS_GAME_END
-      default:          return PLAYERS_PLAYING
-    }
-  }
+  const myPlayer = players.find(p => p.id === myPlayerId)
+  const isHost   = myPlayer?.isHost ?? false
 
-  const currentTurnPlayer = phase === 'playing' ? 'Ollie' : null
+  // Who needs to act right now?
+  const currentActorId   = gameState?.currentBidderId || gameState?.currentPlayerId
+  const currentActorName = players.find(p => p.id === currentActorId)?.name
 
   const handlePlayCard = (card) => {
-    if (phase !== 'playing') return
-    setHand(prev => prev.filter(c => !(c.rank === card.rank && c.suit === card.suit)))
-    setTableCards(prev => [...prev, { ...card, player: 'You' }])
+    if (myTurnPhase !== 'play') return
+    const cardIndex = myHand.findIndex(c => c.rank === card.rank && c.suit === card.suit)
+    if (cardIndex !== -1) playCard(roomId, cardIndex)
   }
+
+  const handleBid = (bid) => placeBid(roomId, bid)
+
+  // Normalize data for overlays
+  const roundSummaryPlayers = roundSummary?.map(r => ({
+    name:       r.playerName,
+    bid:        r.bid,
+    tricks:     r.tricks,
+    hit:        r.hit,
+    roundScore: r.roundScore,
+    score:      r.totalScore,
+  }))
+
+  const finalPlayers = finalResult?.finalScores?.map(r => ({
+    name:  r.playerName,
+    score: r.score,
+    rank:  r.rank,
+  }))
+
+  const showHand    = phase === 'bidding' || phase === 'playing'
+  const showBidPanel = myTurnPhase === 'bid'
 
   return (
     <div style={{
@@ -649,18 +641,20 @@ export default function OhHellGame() {
 
         {/* Center: Round + Trump + Turn */}
         <div style={{ display: 'flex', alignItems: 'center', gap: '1.1rem' }}>
-          <span style={{
-            fontFamily: 'var(--font-serif)',
-            fontSize: '0.68rem',
-            letterSpacing: '0.14em',
-            textTransform: 'uppercase',
-            color: 'var(--gold)',
-            opacity: 0.6,
-          }}>
-            Round 5 of 9
-          </span>
-          <TrumpBadge suit="♥" />
-          {currentTurnPlayer && (
+          {gameState?.round > 0 && (
+            <span style={{
+              fontFamily: 'var(--font-serif)',
+              fontSize: '0.68rem',
+              letterSpacing: '0.14em',
+              textTransform: 'uppercase',
+              color: 'var(--gold)',
+              opacity: 0.6,
+            }}>
+              Round {gameState.round} of {gameState.maxRound}
+            </span>
+          )}
+          <TrumpBadge suit={trump?.suit} />
+          {currentActorName && (phase === 'bidding' || phase === 'playing') && (
             <motion.div
               animate={{ opacity: [0.55, 1, 0.55] }}
               transition={{ duration: 2.2, repeat: Infinity, ease: 'easeInOut' }}
@@ -675,36 +669,13 @@ export default function OhHellGame() {
                 color: 'var(--cream)',
               }}
             >
-              {currentTurnPlayer === playerName ? 'Your turn' : `${currentTurnPlayer}'s turn`}
+              {currentActorId === myPlayerId ? 'Your turn' : `${currentActorName}'s turn`}
             </motion.div>
           )}
         </div>
 
-        {/* Right: Dev phase switcher + Leave */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', flexShrink: 0 }}>
-          {/* Dev phase buttons */}
-          <div style={{ display: 'flex', gap: '2px' }}>
-            {PHASES.map(p => (
-              <button
-                key={p}
-                onClick={() => setPhase(p)}
-                style={{
-                  padding: '0.18rem 0.4rem',
-                  borderRadius: '4px',
-                  border: `1px solid ${phase === p ? 'rgba(200,168,75,0.55)' : 'rgba(200,168,75,0.1)'}`,
-                  background: phase === p ? 'rgba(200,168,75,0.14)' : 'transparent',
-                  color: phase === p ? 'var(--gold)' : 'rgba(200,168,75,0.28)',
-                  fontFamily: 'var(--font-body)',
-                  fontSize: '0.52rem',
-                  cursor: 'pointer',
-                  letterSpacing: '0.04em',
-                  transition: 'all 0.15s ease',
-                }}
-              >
-                {p}
-              </button>
-            ))}
-          </div>
+        {/* Right: Leave */}
+        <div style={{ flexShrink: 0 }}>
           <button
             onClick={() => navigate('/oh-hell')}
             style={{
@@ -740,7 +711,7 @@ export default function OhHellGame() {
           overflowY: 'auto',
           padding: '1.25rem',
         }}>
-          <Scoreboard players={getPlayers()} round={5} />
+          <Scoreboard players={players} round={gameState?.round} />
         </aside>
 
         {/* Center: Main game area */}
@@ -752,7 +723,12 @@ export default function OhHellGame() {
           minWidth: 0,
         }}>
           {phase === 'waiting' ? (
-            <WaitingRoom roomId={roomId} players={getPlayers()} />
+            <WaitingRoom
+              roomId={roomId}
+              players={players}
+              isHost={isHost}
+              onStart={() => startGame(roomId)}
+            />
           ) : (
             <>
               {/* Table area */}
@@ -778,7 +754,7 @@ export default function OhHellGame() {
                   gap: '1.5rem',
                   position: 'relative',
                 }}>
-                  {/* Table label ring */}
+                  {/* Inner ring */}
                   <div style={{
                     position: 'absolute',
                     inset: '12px',
@@ -788,17 +764,17 @@ export default function OhHellGame() {
                   }} />
 
                   <AnimatePresence>
-                    {phase === 'playing' && tableCards.map((c, i) => (
+                    {phase === 'playing' && currentTrick.map((entry, i) => (
                       <TableCard
-                        key={`${c.rank}${c.suit}${c.player}`}
-                        card={c}
-                        player={c.player}
+                        key={`${entry.card.rank}${entry.card.suit}${entry.playerId}`}
+                        card={entry.card}
+                        player={entry.playerName}
                         index={i}
                       />
                     ))}
                   </AnimatePresence>
 
-                  {(phase !== 'playing' || tableCards.length === 0) && (
+                  {(phase !== 'playing' || currentTrick.length === 0) && (
                     <p style={{
                       fontFamily: 'var(--font-serif)',
                       fontSize: '0.62rem',
@@ -815,36 +791,39 @@ export default function OhHellGame() {
               </div>
 
               {/* Player hand */}
-              <div style={{
-                flexShrink: 0,
-                padding: '0.6rem 2rem 1.25rem',
-                borderTop: '1px solid rgba(200,168,75,0.06)',
-                background: 'rgba(13,5,8,0.35)',
-              }}>
-                <p style={{
-                  fontFamily: 'var(--font-serif)',
-                  fontSize: '0.58rem',
-                  letterSpacing: '0.2em',
-                  textTransform: 'uppercase',
-                  color: 'var(--gold)',
-                  opacity: 0.32,
-                  textAlign: 'center',
-                  margin: '0 0 0.4rem',
+              {showHand && (
+                <div style={{
+                  flexShrink: 0,
+                  padding: '0.6rem 2rem 1.25rem',
+                  borderTop: '1px solid rgba(200,168,75,0.06)',
+                  background: 'rgba(13,5,8,0.35)',
                 }}>
-                  Your Hand
-                </p>
-                <PlayerHand
-                  cards={hand}
-                  onPlay={handlePlayCard}
-                />
-              </div>
+                  <p style={{
+                    fontFamily: 'var(--font-serif)',
+                    fontSize: '0.58rem',
+                    letterSpacing: '0.2em',
+                    textTransform: 'uppercase',
+                    color: 'var(--gold)',
+                    opacity: myTurnPhase === 'play' ? 0.7 : 0.32,
+                    textAlign: 'center',
+                    margin: '0 0 0.4rem',
+                    transition: 'opacity 0.3s ease',
+                  }}>
+                    {myTurnPhase === 'play' ? 'Your turn — play a card' : 'Your Hand'}
+                  </p>
+                  <PlayerHand
+                    cards={myHand}
+                    onPlay={myTurnPhase === 'play' ? handlePlayCard : undefined}
+                  />
+                </div>
+              )}
             </>
           )}
         </main>
 
-        {/* Right: Bid panel (bidding phase only) */}
+        {/* Right: Bid panel (slides in when it's your turn to bid) */}
         <motion.aside
-          animate={{ width: phase === 'bidding' ? '280px' : '0px' }}
+          animate={{ width: showBidPanel ? '280px' : '0px' }}
           transition={{ type: 'spring', stiffness: 320, damping: 32 }}
           style={{
             flexShrink: 0,
@@ -861,13 +840,10 @@ export default function OhHellGame() {
             padding: '1.5rem',
           }}>
             <BidPanel
-              round={5}
-              playerCount={5}
-              forbidden={3}
-              onBid={bid => {
-                console.log('Bid placed:', bid)
-                setPhase('playing')
-              }}
+              round={gameState?.handSize || 1}
+              playerCount={players.length}
+              forbidden={gameState?.forbiddenBid}
+              onBid={handleBid}
             />
           </div>
         </motion.aside>
@@ -875,18 +851,18 @@ export default function OhHellGame() {
 
       {/* ── OVERLAYS ─────────────────────────────────────────── */}
       <AnimatePresence>
-        {phase === 'round_end' && (
+        {roundSummaryPlayers && phase === 'round_end' && (
           <RoundSummary
             key="round_end"
-            players={PLAYERS_ROUND_END}
-            round={5}
-            onContinue={() => setPhase('playing')}
+            players={roundSummaryPlayers}
+            round={gameState?.round}
+            onContinue={() => nextRound(roomId)}
           />
         )}
-        {phase === 'game_end' && (
+        {finalPlayers && (
           <GameOver
             key="game_end"
-            players={PLAYERS_GAME_END}
+            players={finalPlayers}
             onExit={() => navigate('/oh-hell')}
           />
         )}

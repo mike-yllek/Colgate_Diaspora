@@ -10,24 +10,24 @@ import members from '../data/members'
    ───────────────────────────────────────────────────────────────── */
 const siteConfig = {
   currentChampion: {
-    memberId:   'ollie',
+    memberId:   'joe',
     record:     '11–3',
-    points:     '1842',
-    titles:     3,
-    streak:     'W5',
-    flavorText: 'Current commissioner and reigning champion. Some say he writes the rules in his favor.',
+    points:     '1741',
+    titles:     2,
+    streak:     'Back-to-Back',
+    flavorText: 'Back-to-back champion. The waiver wire is his personal grocery store.',
     cardNumber: '001',
   },
   currentLoser: {
-    memberId:   'dave',
-    record:     '3–11',
-    points:     '1204',
-    titles:     0,
-    streak:     'L7',
-    flavorText: 'A founding member of the diaspora. Has more excuses than touchdowns.',
+    memberId:   'kenley',
+    record:     '4–10',
+    points:     '1584',
+    titles:     1,
+    streak:     'Toilet Bowl',
+    flavorText: 'Dangerous come December — just not this December.',
     cardNumber: '010',
   },
-  currentSeason: '2024',
+  currentSeason: '2025',
   latestPodcast: {
     title:    'Ep. 42 — Week 13 Recap & Playoff Preview',
     duration: '58 min',
@@ -43,12 +43,20 @@ const siteConfig = {
   },
 }
 
+const CURRENT_BOOK = {
+  title:    'Flashlight',
+  author:   'Susan Choi',
+  selector: 'Mike',
+  link:     'https://www.goodreads.com/search?q=Flashlight+Susan+Choi',
+}
+
 /* ─── Nav tiles ──────────────────────────────────────────────────── */
 const NAV_TILES = [
-  { icon: '📜', label: 'Archive',     to: '/archive',  desc: 'Season history'  },
-  { icon: '👤', label: 'Member Bios', to: '/bios',     desc: 'All managers'    },
-  { icon: '📅', label: 'Calendar',    to: '/calendar', desc: 'Key dates'       },
-  { icon: '🎙', label: 'Podcasts',    to: '/podcasts', desc: 'Weekly pod'      },
+  { icon: '📜', label: 'Archive',     to: '/archive',    desc: 'Season history'  },
+  { icon: '👤', label: 'Member Bios', to: '/bios',       desc: 'All managers'    },
+  { icon: '📅', label: 'Calendar',    to: '/calendar',   desc: 'Key dates'       },
+  { icon: '🎙', label: 'Podcasts',    to: '/podcasts',   desc: 'Weekly pod'      },
+  { icon: '📚', label: 'Book Club',   to: '/book-club',  desc: 'Current reads'   },
 ]
 
 /* ─── Framer Motion variants ─────────────────────────────────────── */
@@ -382,8 +390,100 @@ export default function Home() {
         episode={{ title: latestPodcast.title, duration: latestPodcast.duration }}
       />
 
-      {/* ── 4. Next Event ───────────────────────────────────────── */}
-      <section style={{ maxWidth: '680px', margin: '0 auto', padding: '4rem 2rem' }}>
+      {/* ── 4. Book Club ────────────────────────────────────────── */}
+      <section style={{ maxWidth: '680px', margin: '0 auto', padding: '0 2rem 4rem' }}>
+        <div style={{
+          display: 'flex',
+          alignItems: 'center',
+          gap: '1rem',
+          marginBottom: '1.25rem',
+        }}>
+          <span style={{
+            fontFamily: 'var(--font-serif)',
+            fontSize: '0.68rem',
+            letterSpacing: '0.25em',
+            textTransform: 'uppercase',
+            color: 'var(--gold)',
+            opacity: 0.7,
+            whiteSpace: 'nowrap',
+          }}>
+            📚 Book Club
+          </span>
+          <div style={{
+            flex: 1,
+            height: '1px',
+            background: 'linear-gradient(90deg, rgba(200,168,75,0.35), transparent)',
+          }} />
+        </div>
+
+        <Link
+          to="/book-club"
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            gap: '1rem',
+            padding: '1.25rem 1.5rem',
+            border: '1px solid rgba(200,168,75,0.22)',
+            borderRadius: 'var(--card-radius)',
+            background: 'rgba(107,26,42,0.07)',
+            textDecoration: 'none',
+            transition: 'border-color 0.25s ease, background 0.25s ease',
+          }}
+          onMouseEnter={e => {
+            e.currentTarget.style.borderColor = 'rgba(200,168,75,0.5)'
+            e.currentTarget.style.background = 'rgba(107,26,42,0.14)'
+          }}
+          onMouseLeave={e => {
+            e.currentTarget.style.borderColor = 'rgba(200,168,75,0.22)'
+            e.currentTarget.style.background = 'rgba(107,26,42,0.07)'
+          }}
+        >
+          <div>
+            <div style={{
+              fontFamily: 'var(--font-serif)',
+              fontSize: '0.58rem',
+              letterSpacing: '0.14em',
+              textTransform: 'uppercase',
+              color: 'var(--gold)',
+              opacity: 0.55,
+              marginBottom: '0.3rem',
+            }}>
+              Currently Reading
+            </div>
+            <div style={{
+              fontFamily: 'var(--font-display)',
+              fontSize: '1.1rem',
+              color: 'var(--gold)',
+              lineHeight: 1.2,
+            }}>
+              {CURRENT_BOOK.title}
+            </div>
+            <div style={{
+              fontFamily: 'var(--font-body)',
+              fontSize: '0.75rem',
+              color: 'var(--cream)',
+              opacity: 0.45,
+              marginTop: '0.2rem',
+            }}>
+              {CURRENT_BOOK.author} · Selected by {CURRENT_BOOK.selector}
+            </div>
+          </div>
+          <div style={{
+            fontFamily: 'var(--font-serif)',
+            fontSize: '0.68rem',
+            letterSpacing: '0.1em',
+            color: 'var(--gold)',
+            opacity: 0.5,
+            flexShrink: 0,
+          }}>
+            →
+          </div>
+        </Link>
+      </section>
+
+      {/* ── 5. Next Event ───────────────────────────────────────── */}
+      <section style={{ maxWidth: '680px', margin: '0 auto', padding: '0 2rem 4rem' }}>
         {/* Heading with extending gold line */}
         <div style={{
           display: 'flex',
@@ -412,7 +512,7 @@ export default function Home() {
         <NextEventCard event={nextEvent} />
       </section>
 
-      {/* ── 5. Nav Tiles ────────────────────────────────────────── */}
+      {/* ── 6. Nav Tiles ────────────────────────────────────────── */}
       <section style={{ maxWidth: '860px', margin: '0 auto', padding: '0 2rem 6rem' }}>
         <div style={{
           display: 'grid',

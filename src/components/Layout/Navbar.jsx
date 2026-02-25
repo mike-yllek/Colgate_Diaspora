@@ -2,10 +2,11 @@ import { NavLink, Link } from 'react-router-dom'
 import { motion } from 'framer-motion'
 
 const navLinks = [
-  { to: '/archive',  label: 'Archive' },
-  { to: '/bios',     label: 'Bios' },
-  { to: '/calendar', label: 'Calendar' },
-  { to: '/podcasts', label: 'Podcasts' },
+  { to: '/archive',    label: 'Archive'    },
+  { to: '/bios',       label: 'Bios'       },
+  { to: '/calendar',   label: 'Calendar'   },
+  { to: '/podcasts',   label: 'Podcasts'   },
+  { to: '/book-club',  label: 'Book Club'  },
 ]
 
 export default function Navbar() {
