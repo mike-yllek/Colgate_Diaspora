@@ -63,13 +63,13 @@ const members = [
     id: "tj",     name: "TJ",     role: "Alumni",
     class: "Former Member",   active: false, alumni: true,
     photo: "/images/members/tj.jpg",
-    flavorText: "Retired from the league. Never retired from the banter.",
+    flavorText: "Gone and most certainly forgotten.",
   },
   {
     id: "eric",   name: "Eric",   role: "Alumni",
     class: "Former Member",   active: false, alumni: true,
     photo: "/images/members/eric.jpg",
-    flavorText: "OG member. Left us too soon.",
+    flavorText: "Barely happened.",
   },
 ]
 
