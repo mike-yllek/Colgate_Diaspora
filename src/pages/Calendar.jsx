@@ -1,6 +1,13 @@
 import { useState } from 'react'
 import { motion } from 'framer-motion'
+import { Link } from 'react-router-dom'
 import events from '../data/events'
+
+const STORAGE_KEY = 'cd_custom_events'
+function loadCustomEvents() {
+  try { return JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]') }
+  catch { return [] }
+}
 
 /* ── Date helpers ─────────────────────────────────────────────────────── */
 const TODAY = new Date()
@@ -324,6 +331,19 @@ function UpcomingEventCard({ event, index }) {
         }}>
           {event.title}
         </h3>
+        {event.location && (
+          <p style={{
+            fontFamily: 'var(--font-serif)',
+            fontSize: '0.6rem',
+            letterSpacing: '0.1em',
+            textTransform: 'uppercase',
+            color: 'var(--cream)',
+            opacity: 0.4,
+            marginBottom: '0.35rem',
+          }}>
+            📍 {event.location}
+          </p>
+        )}
         {event.description && (
           <p style={{
             fontFamily: 'var(--font-body)',
@@ -332,6 +352,7 @@ function UpcomingEventCard({ event, index }) {
             opacity: 0.58,
             lineHeight: 1.5,
             marginBottom: event.addToCalendarLink ? '0.75rem' : 0,
+            whiteSpace: 'pre-line',
           }}>
             {event.description}
           </p>
@@ -453,7 +474,8 @@ function SectionLabel({ children, faded = false }) {
 
 /* ── Page ────────────────────────────────────────────────────────────── */
 export default function Calendar() {
-  const sorted   = [...events].sort((a, b) => parseDate(a.date) - parseDate(b.date))
+  const allEvents = [...events, ...loadCustomEvents()]
+  const sorted   = [...allEvents].sort((a, b) => parseDate(a.date) - parseDate(b.date))
   const upcoming = sorted.filter(e => !isPast(e.date))
   const past     = sorted.filter(e => isPast(e.date)).reverse() // most recent first
 
@@ -515,7 +537,7 @@ export default function Calendar() {
 
       {/* ── Past events ──────────────────────────────────────────── */}
       {past.length > 0 && (
-        <section>
+        <section style={{ marginBottom: '4rem' }}>
           <SectionLabel faded>📁 Past Events</SectionLabel>
           <div style={{
             border: '1px solid rgba(200,168,75,0.1)',
@@ -533,6 +555,36 @@ export default function Calendar() {
           </div>
         </section>
       )}
+
+      {/* ── Add Event button ─────────────────────────────────────── */}
+      <div style={{ display: 'flex', justifyContent: 'center', paddingTop: '1rem' }}>
+        <Link
+          to="/calendar/add-event"
+          style={{
+            fontFamily: 'var(--font-serif)',
+            fontSize: '0.68rem',
+            letterSpacing: '0.2em',
+            textTransform: 'uppercase',
+            color: 'var(--gold)',
+            background: 'rgba(200,168,75,0.08)',
+            border: '1px solid rgba(200,168,75,0.35)',
+            borderRadius: '24px',
+            padding: '11px 28px',
+            textDecoration: 'none',
+            transition: 'background 0.2s ease, border-color 0.2s ease',
+          }}
+          onMouseEnter={e => {
+            e.currentTarget.style.background = 'rgba(200,168,75,0.18)'
+            e.currentTarget.style.borderColor = 'rgba(200,168,75,0.65)'
+          }}
+          onMouseLeave={e => {
+            e.currentTarget.style.background = 'rgba(200,168,75,0.08)'
+            e.currentTarget.style.borderColor = 'rgba(200,168,75,0.35)'
+          }}
+        >
+          + Add Event
+        </Link>
+      </div>
 
     </div>
   )

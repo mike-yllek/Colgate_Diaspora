@@ -5,6 +5,7 @@ import Home from './pages/Home'
 import Bios from './pages/Bios'
 import Archive from './pages/Archive'
 import Calendar from './pages/Calendar'
+import AddEvent from './pages/AddEvent'
 import Podcasts from './pages/Podcasts'
 import BookClub from './pages/BookClub'
 import OhHellLobby from './pages/OhHell/index'
@@ -20,6 +21,7 @@ function App() {
             <Route path="bios" element={<Bios />} />
             <Route path="archive" element={<Archive />} />
             <Route path="calendar" element={<Calendar />} />
+            <Route path="calendar/add-event" element={<AddEvent />} />
             <Route path="podcasts" element={<Podcasts />} />
             <Route path="book-club" element={<BookClub />} />
             <Route path="oh-hell" element={<OhHellLobby />} />
