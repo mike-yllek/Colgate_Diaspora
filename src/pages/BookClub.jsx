@@ -1,5 +1,50 @@
 import { motion } from 'framer-motion'
 
+const PAST_BOOKS = [
+  {
+    title:    'The Night Circus',
+    author:   'Erin Morgenstern',
+    selector: 'Dave',
+    link:     'https://www.goodreads.com/book/show/9361589-the-night-circus',
+    description: null,
+  },
+  {
+    title:    'In the Lives of Puppets',
+    author:   'TJ Klune',
+    selector: 'Bobby',
+    link:     'https://www.goodreads.com/book/show/61884832-in-the-lives-of-puppets',
+    description: null,
+  },
+  {
+    title:    'No Country for Old Men',
+    author:   'Cormac McCarthy',
+    selector: 'Joe',
+    link:     'https://www.goodreads.com/book/show/12497.No_Country_for_Old_Men',
+    description: null,
+  },
+  {
+    title:    'The Mercy of the Gods',
+    author:   'James S.A. Corey',
+    selector: 'Ben',
+    link:     'https://www.goodreads.com/book/show/199142398-the-mercy-of-the-gods',
+    description: null,
+  },
+  {
+    title:    'These Silent Woods',
+    author:   'Kimi Cunningham Grant',
+    selector: 'Andy',
+    link:     'https://www.goodreads.com/book/show/57693700-these-silent-woods',
+    description: null,
+  },
+  {
+    title:    'The Winner',
+    author:   'Teddy Wayne',
+    selector: 'Kiri',
+    link:     'https://www.goodreads.com/book/show/199395765-the-winner',
+    description: null,
+  },
+]
+
 const CURRENT_BOOK = {
   title:    'Flashlight',
   author:   'Susan Choi',
@@ -243,17 +288,19 @@ export default function BookClub() {
           }} />
         </div>
 
-        <p style={{
-          fontFamily: 'var(--font-body)',
-          fontSize: '0.82rem',
-          color: 'var(--cream)',
-          opacity: 0.28,
-          fontStyle: 'italic',
-          textAlign: 'center',
-          padding: '2rem 0',
-        }}>
-          More titles coming soon.
-        </p>
+        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '1.5rem' }}>
+          {PAST_BOOKS.map((book, i) => (
+            <motion.div
+              key={book.title}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.4, delay: i * 0.07 }}
+              style={{ width: '100%', display: 'flex', justifyContent: 'center' }}
+            >
+              <BookCard book={book} isCurrent={false} />
+            </motion.div>
+          ))}
+        </div>
       </section>
 
     </div>
