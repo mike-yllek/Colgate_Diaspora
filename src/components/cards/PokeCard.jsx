@@ -134,30 +134,80 @@ export default function PokeCard({
               padding: '8px 10px 6px',
               background: 'rgba(0,0,0,0.25)',
               borderBottom: '1px solid rgba(200,168,75,0.07)',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '8px',
             }}>
-              <div style={{
-                fontFamily: 'var(--font-display)',
-                fontSize: '1.05rem',
-                color: isLoser ? '#777' : 'var(--gold)',
-                textShadow: isChampion ? '0 0 14px rgba(200,168,75,0.5)' : 'none',
-                whiteSpace: 'nowrap',
-                overflow: 'hidden',
-                textOverflow: 'ellipsis',
-                lineHeight: 1.2,
-              }}>
-                {name}
+              {/* Name + role */}
+              <div style={{ flex: 1, minWidth: 0 }}>
+                <div style={{
+                  fontFamily: 'var(--font-display)',
+                  fontSize: '1.05rem',
+                  color: isLoser ? '#777' : 'var(--gold)',
+                  textShadow: isChampion ? '0 0 14px rgba(200,168,75,0.5)' : 'none',
+                  whiteSpace: 'nowrap',
+                  overflow: 'hidden',
+                  textOverflow: 'ellipsis',
+                  lineHeight: 1.2,
+                }}>
+                  {name}
+                </div>
+                <div style={{
+                  fontFamily: 'var(--font-serif)',
+                  fontSize: '0.58rem',
+                  letterSpacing: '0.12em',
+                  textTransform: 'uppercase',
+                  color: isLoser ? '#555' : 'var(--gold-light)',
+                  opacity: 0.6,
+                  marginTop: '2px',
+                }}>
+                  {role}
+                </div>
               </div>
-              <div style={{
-                fontFamily: 'var(--font-serif)',
-                fontSize: '0.58rem',
-                letterSpacing: '0.12em',
-                textTransform: 'uppercase',
-                color: isLoser ? '#555' : 'var(--gold-light)',
-                opacity: 0.6,
-                marginTop: '2px',
-              }}>
-                {role}
-              </div>
+
+              {/* Power badge */}
+              {powerScore != null && (() => {
+                const hue = Math.round(powerScore * 1.2)
+                const bg  = `hsl(${hue}, 82%, 38%)`
+                const glow = `hsl(${hue}, 90%, 52%)`
+                return (
+                  <div style={{
+                    display: 'flex',
+                    flexDirection: 'row',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    gap: '5px',
+                    background: bg,
+                    borderRadius: '7px',
+                    padding: '5px 8px',
+                    flexShrink: 0,
+                    boxShadow: `0 0 10px ${glow}99, 0 2px 6px rgba(0,0,0,0.5)`,
+                    border: `1px solid ${glow}55`,
+                  }}>
+                    <span style={{
+                      fontFamily: 'var(--font-serif)',
+                      fontSize: '0.52rem',
+                      fontWeight: 700,
+                      letterSpacing: '0.12em',
+                      textTransform: 'uppercase',
+                      color: 'rgba(255,255,255,0.85)',
+                      lineHeight: 1,
+                    }}>
+                      Power
+                    </span>
+                    <span style={{
+                      fontFamily: 'var(--font-body)',
+                      fontSize: '0.88rem',
+                      fontWeight: 700,
+                      color: '#fff',
+                      lineHeight: 1,
+                      textShadow: `0 0 8px ${glow}`,
+                    }}>
+                      {powerScore}
+                    </span>
+                  </div>
+                )
+              })()}
             </div>
 
             {/* 3 ── Image area */}
@@ -196,38 +246,6 @@ export default function PokeCard({
                 </div>
               )}
 
-              {/* Power score badge */}
-              {powerScore != null && (
-                <div style={{
-                  position: 'absolute',
-                  top: '8px',
-                  right: '8px',
-                  width: '28px',
-                  height: '28px',
-                  borderRadius: '50%',
-                  background: (() => {
-                    const t = powerScore / 100
-                    const r = Math.round(107 + 93 * t)
-                    const g = Math.round(26  + 142 * t)
-                    const b = Math.round(42  + 33  * t)
-                    return `rgb(${r},${g},${b})`
-                  })(),
-                  border: '1.5px solid rgba(255,255,255,0.22)',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  fontSize: '0.54rem',
-                  fontFamily: 'var(--font-body)',
-                  fontWeight: 700,
-                  color: 'rgba(255,255,255,0.93)',
-                  boxShadow: '0 1px 6px rgba(0,0,0,0.6)',
-                  zIndex: 2,
-                  lineHeight: 1,
-                  letterSpacing: 0,
-                }}>
-                  {powerScore}
-                </div>
-              )}
 
               {/* Champion: gold inner glow */}
               {isChampion && (
