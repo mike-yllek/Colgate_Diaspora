@@ -2,6 +2,13 @@ import { motion } from 'framer-motion'
 
 const PAST_BOOKS = [
   {
+    title:    'Flashlight',
+    author:   'Susan Choi',
+    selector: 'Mike',
+    link:     'https://www.goodreads.com/search?q=Flashlight+Susan+Choi',
+    description: null,
+  },
+  {
     title:    'The Night Circus',
     author:   'Erin Morgenstern',
     selector: 'Dave',
@@ -46,12 +53,12 @@ const PAST_BOOKS = [
 ]
 
 const CURRENT_BOOK = {
-  title:    'Flashlight',
-  author:   'Susan Choi',
-  selector: 'Mike',
-  year:     2025,
-  link:     'https://www.goodreads.com/search?q=Flashlight+Susan+Choi',
-  description: 'Selected by Mike for the inaugural Colgate Diaspora Book Club pick.',
+  title:    'The Splendid and the Vile',
+  author:   'Erik Larson',
+  selector: 'Kenley',
+  year:     2026,
+  link:     'https://www.goodreads.com/search?q=The+Splendid+and+the+Vile+Erik+Larson',
+  description: null,
 }
 
 function BookCard({ book, isCurrent }) {

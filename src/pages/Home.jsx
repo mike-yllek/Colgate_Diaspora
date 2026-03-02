@@ -74,10 +74,10 @@ const siteConfig = {
 }
 
 const CURRENT_BOOK = {
-  title:    'Flashlight',
-  author:   'Susan Choi',
-  selector: 'Mike',
-  link:     'https://www.goodreads.com/search?q=Flashlight+Susan+Choi',
+  title:    'The Splendid and the Vile',
+  author:   'Erik Larson',
+  selector: 'Kenley',
+  link:     'https://www.goodreads.com/search?q=The+Splendid+and+the+Vile+Erik+Larson',
 }
 
 /* ─── Nav tiles ──────────────────────────────────────────────────── */
