@@ -4,6 +4,44 @@ import { motion } from 'framer-motion'
 import PokeCard from '../components/cards/PokeCard'
 import PodcastBar from '../components/ui/PodcastBar'
 import members from '../data/members'
+import staticEvents from '../data/events'
+
+const STORAGE_KEY = 'cd_custom_events'
+function loadCustomEvents() {
+  try { return JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]') }
+  catch { return [] }
+}
+
+function parseDate(iso) { return new Date(iso + 'T12:00:00') }
+
+const TYPE_TAGS = {
+  bookclub:        'Book Club',
+  meetup:          'Meetup',
+  fantasyfootball: 'Fantasy Football',
+  draft:           'Draft',
+  deadline:        'Deadline',
+  playoffs:        'Playoffs',
+  other:           'Event',
+}
+
+function getNextEvent() {
+  const now = new Date()
+  const all = [...staticEvents, ...loadCustomEvents()]
+  const upcoming = all
+    .filter(e => parseDate(e.date) >= now)
+    .sort((a, b) => parseDate(a.date) - parseDate(b.date))
+  const e = upcoming[0]
+  if (!e) return null
+  const d = parseDate(e.date)
+  return {
+    month:       d.toLocaleDateString('en-US', { month: 'short' }).toUpperCase(),
+    day:         String(d.getDate()).padStart(2, '0'),
+    year:        String(d.getFullYear()),
+    title:       e.title,
+    description: e.description || '',
+    tag:         TYPE_TAGS[e.type] || 'Event',
+  }
+}
 
 /* ─────────────────────────────────────────────────────────────────
    SITE CONFIG — update each season here, nothing else needs changing
@@ -32,14 +70,6 @@ const siteConfig = {
     title:    'Ep. 42 — Week 13 Recap & Playoff Preview',
     duration: '58 min',
     episode:  42,
-  },
-  nextEvent: {
-    month:       'Mar',
-    day:         '08',
-    year:        '2026',
-    title:       '2025 Draft Day',
-    description: 'Annual live draft — all 10 managers online. Snake format, 15 rounds. Trash talk mandatory.',
-    tag:         'Draft',
   },
 }
 
@@ -242,7 +272,8 @@ function NavTile({ icon, label, to, desc }) {
 export default function Home() {
   const champion = members.find(m => m.id === siteConfig.currentChampion.memberId)
   const loser    = members.find(m => m.id === siteConfig.currentLoser.memberId)
-  const { currentChampion: champ, currentLoser: loserCfg, currentSeason, latestPodcast, nextEvent } = siteConfig
+  const { currentChampion: champ, currentLoser: loserCfg, currentSeason, latestPodcast } = siteConfig
+  const nextEvent = getNextEvent()
 
   return (
     <div style={{ minHeight: '100vh' }}>
@@ -484,7 +515,6 @@ export default function Home() {
 
       {/* ── 5. Next Event ───────────────────────────────────────── */}
       <section style={{ maxWidth: '680px', margin: '0 auto', padding: '0 2rem 4rem' }}>
-        {/* Heading with extending gold line */}
         <div style={{
           display: 'flex',
           alignItems: 'center',
@@ -509,7 +539,23 @@ export default function Home() {
           }} />
         </div>
 
-        <NextEventCard event={nextEvent} />
+        {nextEvent ? (
+          <NextEventCard event={nextEvent} />
+        ) : (
+          <div style={{
+            padding: '1.5rem',
+            border: '1px solid rgba(200,168,75,0.12)',
+            borderRadius: 'var(--card-radius)',
+            background: 'rgba(107,26,42,0.05)',
+            fontFamily: 'var(--font-body)',
+            fontSize: '0.875rem',
+            color: 'var(--cream)',
+            opacity: 0.35,
+            fontStyle: 'italic',
+          }}>
+            No upcoming events. <Link to="/calendar/add-event" style={{ color: 'var(--gold)', opacity: 0.7, textDecoration: 'none' }}>Add one →</Link>
+          </div>
+        )}
       </section>
 
       {/* ── 6. Nav Tiles ────────────────────────────────────────── */}

@@ -2,6 +2,7 @@ import { NavLink, Link } from 'react-router-dom'
 import { motion } from 'framer-motion'
 
 const navLinks = [
+  { to: '/',           label: 'Home',      end: true },
   { to: '/archive',    label: 'Archive'    },
   { to: '/bios',       label: 'Bios'       },
   { to: '/calendar',   label: 'Calendar'   },
@@ -65,10 +66,11 @@ export default function Navbar() {
         left: '50%',
         transform: 'translateX(-50%)',
       }}>
-        {navLinks.map(({ to, label }) => (
+        {navLinks.map(({ to, label, end }) => (
           <li key={to}>
             <NavLink
               to={to}
+              end={end}
               style={({ isActive }) => ({
                 fontFamily: 'var(--font-serif)',
                 fontSize: '0.85rem',
