@@ -18,8 +18,9 @@ export default function PokeCard({
   record,
   cardNumber  = '001',
   season      = '2025',
-  powerScore  = null,
-  typeLabel   = null,
+  powerScore    = null,
+  typeLabel     = null,
+  photoPosition = 'center center',
 }) {
   const cardRef  = useRef(null)
   const [tilt, setTilt]       = useState({ x: 0, y: 0 })
@@ -225,7 +226,7 @@ export default function PokeCard({
                     width: '100%',
                     height: '100%',
                     objectFit: 'cover',
-                    objectPosition: 'center center',
+                    objectPosition: photoPosition,
                     filter: isLoser ? 'grayscale(1) brightness(0.65)' : 'none',
                     display: 'block',
                   }}

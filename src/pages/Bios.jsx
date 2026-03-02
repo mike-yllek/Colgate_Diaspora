@@ -81,6 +81,20 @@ function CardBack({ member, variant, onReturn }) {
         {member.name}
       </div>
 
+      {/* Location */}
+      {member.location && (
+        <div style={{
+          fontFamily: 'var(--font-body)',
+          fontSize: '0.72rem',
+          color: isLoser ? '#555' : 'var(--cream)',
+          opacity: 0.5,
+          letterSpacing: '0.06em',
+          marginTop: '-0.4rem',
+        }}>
+          📍 {member.location}
+        </div>
+      )}
+
       {/* Stats rows */}
       <div style={{ width: '100%', display: 'flex', flexDirection: 'column', gap: '0.3rem' }}>
         {[
@@ -181,6 +195,7 @@ function CardFlipper({ member, cardNumber, variant }) {
             name={member.name}
             role={member.role}
             photo={member.photo}
+            photoPosition={member.photoPosition}
             flavorText={member.flavorText}
             stats={[
               { label: 'Seasons', value: String(s.seasons  ?? '?') },

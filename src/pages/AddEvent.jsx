@@ -3,11 +3,10 @@ import { useNavigate, Link } from 'react-router-dom'
 import { motion } from 'framer-motion'
 
 const TYPE_OPTIONS = [
-  { value: 'meetup',   label: '🍺 Meetup'    },
-  { value: 'draft',    label: '📋 Draft'     },
-  { value: 'deadline', label: '⚡ Deadline'  },
-  { value: 'playoffs', label: '🏆 Playoffs'  },
-  { value: 'other',    label: '🏈 Other'     },
+  { value: 'bookclub',        label: '📚 Book Club'        },
+  { value: 'meetup',          label: '🍺 Meetup'           },
+  { value: 'fantasyfootball', label: '🏈 Fantasy Football' },
+  { value: 'other',           label: '✨ Other'            },
 ]
 
 const STORAGE_KEY = 'cd_custom_events'
