@@ -415,13 +415,7 @@ export default function Home() {
         </div>
       </section>
 
-      {/* ── 3. Podcast Bar (full width) ─────────────────────────── */}
-      <PodcastBar
-        featured
-        episode={{ title: latestPodcast.title, duration: latestPodcast.duration }}
-      />
-
-      {/* ── 4. Book Club ────────────────────────────────────────── */}
+      {/* ── 3. Book Club ────────────────────────────────────────── */}
       <section style={{ maxWidth: '680px', margin: '0 auto', padding: '0 2rem 4rem' }}>
         <div style={{
           display: 'flex',
@@ -558,7 +552,32 @@ export default function Home() {
         )}
       </section>
 
-      {/* ── 6. Nav Tiles ────────────────────────────────────────── */}
+      {/* ── 6. Podcast Bar (full width) ─────────────────────────── */}
+      <div>
+        <div style={{
+          textAlign: 'center',
+          padding: '5px 2rem',
+          background: 'rgba(200,168,75,0.05)',
+          borderTop: '1px solid rgba(200,168,75,0.1)',
+        }}>
+          <span style={{
+            fontFamily: 'var(--font-serif)',
+            fontSize: '0.52rem',
+            letterSpacing: '0.2em',
+            textTransform: 'uppercase',
+            color: 'var(--gold)',
+            opacity: 0.4,
+          }}>
+            🚧 Under Construction
+          </span>
+        </div>
+        <PodcastBar
+          featured
+          episode={{ title: latestPodcast.title, duration: latestPodcast.duration }}
+        />
+      </div>
+
+      {/* ── 7. Nav Tiles ────────────────────────────────────────── */}
       <section style={{ maxWidth: '860px', margin: '0 auto', padding: '0 2rem 6rem' }}>
         <div style={{
           display: 'grid',
