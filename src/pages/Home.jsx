@@ -552,30 +552,52 @@ export default function Home() {
         )}
       </section>
 
-      {/* ── 6. Podcast Bar (full width) ─────────────────────────── */}
-      <div>
+      {/* ── 6. Podcast Bar ──────────────────────────────────────── */}
+      <section style={{ maxWidth: '680px', margin: '0 auto', padding: '0 2rem 4rem' }}>
         <div style={{
-          textAlign: 'center',
-          padding: '5px 2rem',
-          background: 'rgba(200,168,75,0.05)',
-          borderTop: '1px solid rgba(200,168,75,0.1)',
+          display: 'flex',
+          alignItems: 'center',
+          gap: '1rem',
+          marginBottom: '1.25rem',
         }}>
           <span style={{
             fontFamily: 'var(--font-serif)',
-            fontSize: '0.52rem',
-            letterSpacing: '0.2em',
+            fontSize: '0.68rem',
+            letterSpacing: '0.25em',
             textTransform: 'uppercase',
             color: 'var(--gold)',
-            opacity: 0.4,
+            opacity: 0.7,
+            whiteSpace: 'nowrap',
+          }}>
+            🎙 Podcast
+          </span>
+          <div style={{
+            flex: 1,
+            height: '1px',
+            background: 'linear-gradient(90deg, rgba(200,168,75,0.35), transparent)',
+          }} />
+          <span style={{
+            fontFamily: 'var(--font-serif)',
+            fontSize: '0.55rem',
+            letterSpacing: '0.14em',
+            textTransform: 'uppercase',
+            color: '#c8a84b',
+            background: 'rgba(200,168,75,0.12)',
+            border: '1px solid rgba(200,168,75,0.4)',
+            borderRadius: '4px',
+            padding: '3px 10px',
+            whiteSpace: 'nowrap',
           }}>
             🚧 Under Construction
           </span>
         </div>
-        <PodcastBar
-          featured
-          episode={{ title: latestPodcast.title, duration: latestPodcast.duration }}
-        />
-      </div>
+        <div style={{ borderRadius: 'var(--card-radius)', overflow: 'hidden' }}>
+          <PodcastBar
+            featured
+            episode={{ title: latestPodcast.title, duration: latestPodcast.duration }}
+          />
+        </div>
+      </section>
 
       {/* ── 7. Nav Tiles ────────────────────────────────────────── */}
       <section style={{ maxWidth: '860px', margin: '0 auto', padding: '0 2rem 6rem' }}>

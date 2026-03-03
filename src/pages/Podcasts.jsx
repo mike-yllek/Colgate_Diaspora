@@ -101,24 +101,33 @@ export default function Podcasts() {
         }}>
           {/* Construction banner */}
           <div style={{
-            background: 'rgba(200,168,75,0.07)',
-            borderBottom: '1px solid rgba(200,168,75,0.15)',
-            padding: '8px 1.5rem',
+            background: 'rgba(200,168,75,0.13)',
+            borderBottom: '1px solid rgba(200,168,75,0.3)',
+            padding: '10px 1.5rem',
             display: 'flex',
             alignItems: 'center',
-            gap: '10px',
+            gap: '12px',
           }}>
+            <span style={{ fontSize: '1rem', lineHeight: 1 }}>🚧</span>
             <span style={{
               fontFamily: 'var(--font-serif)',
-              fontSize: '0.55rem',
+              fontSize: '0.65rem',
               letterSpacing: '0.2em',
               textTransform: 'uppercase',
               color: 'var(--gold)',
-              opacity: 0.55,
             }}>
-              🚧 Under Construction
+              Under Construction
             </span>
-            <div style={{ flex: 1, height: '1px', background: 'linear-gradient(90deg, rgba(200,168,75,0.2), transparent)' }} />
+            <div style={{ flex: 1, height: '1px', background: 'linear-gradient(90deg, rgba(200,168,75,0.3), transparent)' }} />
+            <span style={{
+              fontFamily: 'var(--font-body)',
+              fontSize: '0.72rem',
+              color: 'var(--cream)',
+              opacity: 0.5,
+              fontStyle: 'italic',
+            }}>
+              Coming soon
+            </span>
           </div>
 
           {/* Body */}
