@@ -43,6 +43,7 @@ export default function OhHellLobby() {
   const [rulesOpen,    setRulesOpen]    = useState(false)
   const [openRule,     setOpenRule]     = useState(null)
   const [loading,      setLoading]      = useState(false)
+  const [lobbyError,   setLobbyError]   = useState(null)
   const navigate = useNavigate()
 
   const { createRoom: createRoomFn, joinRoom: joinRoomFn, openRooms, error, isConnected, refreshRooms } = useOhHell()
@@ -66,13 +67,14 @@ export default function OhHellLobby() {
   }, [isConnected, refreshRooms])
 
   const handleCreate = async () => {
-    if (!createName.trim()) return
+    if (!createName.trim() || !isConnected) return
     setLoading(true)
     try {
       const { roomId } = await createRoomFn(createName.trim(), playerCount)
       navigate(`/oh-hell/${roomId}`)
     } catch (err) {
-      console.error(err)
+      setLobbyError(err.message)
+      setTimeout(() => setLobbyError(null), 6000)
     } finally {
       setLoading(false)
     }
@@ -82,13 +84,14 @@ export default function OhHellLobby() {
     e?.preventDefault()
     const roomId = (code || joinCode).trim().toUpperCase()
     const name   = joinName.trim() || createName.trim()
-    if (!roomId || !name) return
+    if (!roomId || !name || !isConnected) return
     setLoading(true)
     try {
       const { roomId: rid } = await joinRoomFn(roomId, name)
       navigate(`/oh-hell/${rid}`)
     } catch (err) {
-      console.error(err)
+      setLobbyError(err.message)
+      setTimeout(() => setLobbyError(null), 6000)
     } finally {
       setLoading(false)
     }
@@ -233,13 +236,13 @@ export default function OhHellLobby() {
 
             {/* Error toast */}
             <AnimatePresence>
-              {error && (
+              {(error || lobbyError) && (
                 <motion.div
                   initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }}
                   style={{ marginBottom: '1rem', padding: '0.75rem 1.25rem', borderRadius: '10px',
                     border: '1px solid rgba(255,80,80,0.4)', background: 'rgba(255,40,40,0.08)',
                     fontFamily: 'var(--font-body)', fontSize: '0.85rem', color: '#ff8888', textAlign: 'center' }}
-                >{error}</motion.div>
+                >{lobbyError || error}</motion.div>
               )}
             </AnimatePresence>
 
@@ -290,7 +293,7 @@ export default function OhHellLobby() {
                   ))}
                 </select>
 
-                <button onClick={handleCreate} disabled={loading || !createName.trim()} style={panelBtn(true)}
+                <button onClick={handleCreate} disabled={loading || !createName.trim() || !isConnected} style={panelBtn(true)}
                   onMouseEnter={e => { if (!loading) { e.currentTarget.style.background = 'var(--maroon-light)'; e.currentTarget.style.boxShadow = '0 0 20px rgba(200,168,75,0.22)' } }}
                   onMouseLeave={e => { e.currentTarget.style.background = 'var(--maroon)'; e.currentTarget.style.boxShadow = 'none' }}>
                   {loading ? 'Dealing…' : 'Deal In'}
@@ -317,7 +320,7 @@ export default function OhHellLobby() {
                     onFocus={e => e.target.style.borderColor = 'rgba(200,168,75,0.75)'}
                     onBlur={e => e.target.style.borderColor = 'rgba(200,168,75,0.35)'} />
 
-                  <button type="submit" disabled={loading || !joinCode.trim() || !joinName.trim()} style={panelBtn(false)}
+                  <button type="submit" disabled={loading || !joinCode.trim() || !joinName.trim() || !isConnected} style={panelBtn(false)}
                     onMouseEnter={e => { if (!loading) e.currentTarget.style.background = 'rgba(200,168,75,0.18)' }}
                     onMouseLeave={e => e.currentTarget.style.background = 'rgba(200,168,75,0.08)'}>
                     {loading ? 'Joining…' : 'Join Room'}

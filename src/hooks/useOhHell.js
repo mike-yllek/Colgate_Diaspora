@@ -98,7 +98,9 @@ export function useOhHell() {
   const createRoom = useCallback((playerName, maxPlayers) => {
     return new Promise((resolve, reject) => {
       const socket = getSocket()
+      let timer
       const onCreated = ({ roomId, playerId }) => {
+        clearTimeout(timer)
         setMyPlayerId(playerId)
         localStorage.setItem('oh_hell_player_id',   playerId)
         localStorage.setItem('oh_hell_player_name', playerName)
@@ -106,11 +108,12 @@ export function useOhHell() {
         cleanup()
         resolve({ roomId, playerId })
       }
-      const onErr = ({ message }) => { cleanup(); reject(new Error(message)) }
+      const onErr = ({ message }) => { clearTimeout(timer); cleanup(); reject(new Error(message)) }
       const cleanup = () => {
         socket.off('room_created', onCreated)
         socket.off('error',        onErr)
       }
+      timer = setTimeout(() => { cleanup(); reject(new Error('Server not responding — is the game server running?')) }, 8000)
       socket.once('room_created', onCreated)
       socket.once('error',        onErr)
       socket.emit('create_room', { playerName, maxPlayers })
@@ -120,7 +123,9 @@ export function useOhHell() {
   const joinRoom = useCallback((roomId, playerName) => {
     return new Promise((resolve, reject) => {
       const socket = getSocket()
+      let timer
       const onJoined = ({ playerId, roomId: rid }) => {
+        clearTimeout(timer)
         setMyPlayerId(playerId)
         localStorage.setItem('oh_hell_player_id',   playerId)
         localStorage.setItem('oh_hell_player_name', playerName)
@@ -128,11 +133,12 @@ export function useOhHell() {
         cleanup()
         resolve({ playerId, roomId: rid })
       }
-      const onErr = ({ message }) => { cleanup(); reject(new Error(message)) }
+      const onErr = ({ message }) => { clearTimeout(timer); cleanup(); reject(new Error(message)) }
       const cleanup = () => {
         socket.off('room_joined', onJoined)
         socket.off('error',       onErr)
       }
+      timer = setTimeout(() => { cleanup(); reject(new Error('Server not responding — is the game server running?')) }, 8000)
       socket.once('room_joined', onJoined)
       socket.once('error',       onErr)
       socket.emit('join_room', { roomId, playerName })
