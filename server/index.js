@@ -159,6 +159,9 @@ io.on('connection', (socket) => {
 
       const result = game.playCard(playerId, cardIndex)
 
+      // Send updated hand to the player who just played
+      socket.emit('your_hand', { cards: game.getPlayerHand(playerId) })
+
       if (result.roundComplete) {
         const pub = game.getPublicState()
 

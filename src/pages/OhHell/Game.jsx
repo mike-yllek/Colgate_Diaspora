@@ -739,7 +739,52 @@ export default function OhHellGame() {
                 justifyContent: 'center',
                 padding: '1.5rem',
                 overflow: 'hidden',
+                gap: '2rem',
               }}>
+                {/* Trump card */}
+                {trump && (
+                  <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '0.4rem', flexShrink: 0 }}>
+                    <div style={{
+                      width: '56px',
+                      height: '80px',
+                      borderRadius: '5px',
+                      border: `2px solid ${TRUMP_META[trump.suit]?.border || 'rgba(200,168,75,0.4)'}`,
+                      background: 'linear-gradient(155deg, #faf8f4 0%, #ede5d4 100%)',
+                      boxShadow: `0 0 16px ${TRUMP_META[trump.suit]?.border || 'rgba(200,168,75,0.3)'}`,
+                      display: 'flex',
+                      flexDirection: 'column',
+                      justifyContent: 'space-between',
+                      padding: '4px 5px',
+                    }}>
+                      <span style={{
+                        fontSize: '0.65rem', fontWeight: 700,
+                        color: SUIT_COLORS[trump.suit],
+                        lineHeight: 1.15, fontFamily: 'var(--font-body)',
+                      }}>
+                        {trump.rank}<br />{trump.suit}
+                      </span>
+                      <span style={{ fontSize: '1.1rem', color: SUIT_COLORS[trump.suit], alignSelf: 'center', opacity: 0.7, lineHeight: 1 }}>
+                        {trump.suit}
+                      </span>
+                      <span style={{
+                        fontSize: '0.65rem', fontWeight: 700,
+                        color: SUIT_COLORS[trump.suit],
+                        lineHeight: 1.15, fontFamily: 'var(--font-body)',
+                        transform: 'rotate(180deg)', alignSelf: 'flex-end',
+                      }}>
+                        {trump.rank}<br />{trump.suit}
+                      </span>
+                    </div>
+                    <span style={{
+                      fontFamily: 'var(--font-serif)', fontSize: '0.52rem',
+                      letterSpacing: '0.14em', textTransform: 'uppercase',
+                      color: TRUMP_META[trump.suit]?.color || 'var(--gold)', opacity: 0.75,
+                    }}>
+                      Trump
+                    </span>
+                  </div>
+                )}
+
                 {/* Felt oval */}
                 <div style={{
                   width: 'min(520px, 90%)',

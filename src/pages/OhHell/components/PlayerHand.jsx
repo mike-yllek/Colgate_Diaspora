@@ -2,10 +2,10 @@ import { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 
 const SUIT_COLORS = {
-  '♠': 'var(--cream)',
-  '♣': 'var(--cream)',
-  '♥': '#e05555',
-  '♦': '#e05555',
+  '♠': '#1a1a1a',
+  '♣': '#1a1a1a',
+  '♥': '#cc2222',
+  '♦': '#cc2222',
 }
 
 /**
