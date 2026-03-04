@@ -711,7 +711,7 @@ export default function OhHellGame() {
           overflowY: 'auto',
           padding: '1.25rem',
         }}>
-          <Scoreboard players={players} round={gameState?.round} />
+          <Scoreboard players={players} round={gameState?.round} myPlayerId={myPlayerId} />
         </aside>
 
         {/* Center: Main game area */}
