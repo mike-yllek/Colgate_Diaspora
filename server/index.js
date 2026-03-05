@@ -152,11 +152,11 @@ io.on('connection', (socket) => {
 
   // ── play_card ───────────────────────────────────────────────────
   socket.on('play_card', ({ roomId, cardIndex }) => {
-    try {
-      const playerId = socket.data.playerId
-      const game     = manager.getGame(roomId)
-      if (!game) throw new Error('Room not found')
+    const playerId = socket.data.playerId
+    const game     = manager.getGame(roomId)
+    if (!game) { socket.emit('error', { message: 'Room not found' }); return }
 
+    try {
       const result = game.playCard(playerId, cardIndex)
 
       // Send updated hand to the player who just played
@@ -189,6 +189,8 @@ io.on('connection', (socket) => {
       }
     } catch (err) {
       socket.emit('error', { message: err.message })
+      // Re-send your_turn so the player can try again (e.g. must-follow-suit rejection)
+      notifyNextPlayer(game)
     }
   })
 

@@ -1,5 +1,5 @@
 import { io } from 'socket.io-client'
-import { useState, useEffect, useCallback, useRef } from 'react'
+import { useState, useEffect, useCallback, useRef, useMemo } from 'react'
 
 const SUIT_ORDER = { '♠': 0, '♥': 1, '♦': 2, '♣': 3 }
 const RANK_ORDER = { '2':2,'3':3,'4':4,'5':5,'6':6,'7':7,'8':8,'9':9,'10':10,'J':11,'Q':12,'K':13,'A':14 }
@@ -41,9 +41,9 @@ function getSocket() {
 export function useOhHell() {
   const [isConnected,  setIsConnected]  = useState(false)
   const [gameState,    setGameState]    = useState(null)
-  const [myHand,       setMyHand]       = useState([])
+  const [serverHand,   setServerHand]   = useState([])   // original server order
   const [myPlayerId,   setMyPlayerId]   = useState(() => localStorage.getItem('oh_hell_player_id'))
-  const serverHandRef = useRef([])  // original server order, used for index lookup on play
+  const serverHandRef = useRef([])  // ref copy for synchronous index lookup in playCard
   const [openRooms,    setOpenRooms]    = useState([])
   const [error,        setError]        = useState(null)
   const [myTurnPhase,  setMyTurnPhase]  = useState(null)   // 'bid' | 'play' | null
@@ -68,7 +68,7 @@ export function useOhHell() {
     }
     const onYourHand = ({ cards }) => {
       serverHandRef.current = cards
-      setMyHand(sortHand(cards))
+      setServerHand(cards)
     }
     const onYourTurn = ({ phase }) => setMyTurnPhase(phase)
 
@@ -107,6 +107,9 @@ export function useOhHell() {
       socket.off('error',             onError)
     }
   }, [])
+
+  // Always-sorted hand for display
+  const myHand = useMemo(() => sortHand(serverHand), [serverHand])
 
   // ── Actions ──────────────────────────────────────────────────────
 
