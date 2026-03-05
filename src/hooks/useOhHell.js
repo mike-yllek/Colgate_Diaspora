@@ -1,5 +1,16 @@
 import { io } from 'socket.io-client'
-import { useState, useEffect, useCallback } from 'react'
+import { useState, useEffect, useCallback, useRef } from 'react'
+
+const SUIT_ORDER = { '♠': 0, '♥': 1, '♦': 2, '♣': 3 }
+const RANK_ORDER = { '2':2,'3':3,'4':4,'5':5,'6':6,'7':7,'8':8,'9':9,'10':10,'J':11,'Q':12,'K':13,'A':14 }
+
+function sortHand(cards) {
+  return [...cards].sort((a, b) => {
+    const sd = SUIT_ORDER[a.suit] - SUIT_ORDER[b.suit]
+    if (sd !== 0) return sd
+    return RANK_ORDER[b.rank] - RANK_ORDER[a.rank]
+  })
+}
 
 const SOCKET_URL = import.meta.env.VITE_SOCKET_URL || 'http://localhost:3001'
 
@@ -32,6 +43,7 @@ export function useOhHell() {
   const [gameState,    setGameState]    = useState(null)
   const [myHand,       setMyHand]       = useState([])
   const [myPlayerId,   setMyPlayerId]   = useState(() => localStorage.getItem('oh_hell_player_id'))
+  const serverHandRef = useRef([])  // original server order, used for index lookup on play
   const [openRooms,    setOpenRooms]    = useState([])
   const [error,        setError]        = useState(null)
   const [myTurnPhase,  setMyTurnPhase]  = useState(null)   // 'bid' | 'play' | null
@@ -54,7 +66,10 @@ export function useOhHell() {
       // Clear the round summary once a new state comes in (next round started)
       if (publicState.phase === 'bidding') setRoundSummary(null)
     }
-    const onYourHand = ({ cards }) => setMyHand(cards)
+    const onYourHand = ({ cards }) => {
+      serverHandRef.current = cards
+      setMyHand(sortHand(cards))
+    }
     const onYourTurn = ({ phase }) => setMyTurnPhase(phase)
 
     const onRoundEnd = ({ roundSummary: rs }) => setRoundSummary(rs)
@@ -154,7 +169,9 @@ export function useOhHell() {
     getSocket().emit('place_bid', { roomId, bid })
   }, [])
 
-  const playCard = useCallback((roomId, cardIndex) => {
+  const playCard = useCallback((roomId, card) => {
+    const cardIndex = serverHandRef.current.findIndex(c => c.rank === card.rank && c.suit === card.suit)
+    if (cardIndex === -1) return
     setMyTurnPhase(null)
     getSocket().emit('play_card', { roomId, cardIndex })
   }, [])

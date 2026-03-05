@@ -569,8 +569,7 @@ export default function OhHellGame() {
 
   const handlePlayCard = (card) => {
     if (myTurnPhase !== 'play') return
-    const cardIndex = myHand.findIndex(c => c.rank === card.rank && c.suit === card.suit)
-    if (cardIndex !== -1) playCard(roomId, cardIndex)
+    playCard(roomId, card)
   }
 
   const handleBid = (bid) => placeBid(roomId, bid)
