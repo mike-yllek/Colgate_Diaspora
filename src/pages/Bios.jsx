@@ -392,7 +392,7 @@ function FantasySection({ ids, label, icon, faded = false }) {
       <SectionLabel icon={icon} label={label} faded={faded} fantasy />
       <div style={{
         display: 'grid',
-        gridTemplateColumns: 'repeat(auto-fill, minmax(240px, 1fr))',
+        gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))',
         gap: '24px',
         justifyItems: 'center',
       }}>
@@ -540,7 +540,7 @@ export default function Bios() {
                 </p>
                 <div style={{
                   display: 'grid',
-                  gridTemplateColumns: 'repeat(auto-fill, minmax(240px, 1fr))',
+                  gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))',
                   gap: '24px',
                   justifyItems: 'center',
                 }}>
@@ -634,7 +634,7 @@ export default function Bios() {
                 <motion.div
                   style={{
                     display: 'grid',
-                    gridTemplateColumns: 'repeat(auto-fill, minmax(240px, 1fr))',
+                    gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))',
                     gap: '2rem',
                     justifyItems: 'center',
                   }}
