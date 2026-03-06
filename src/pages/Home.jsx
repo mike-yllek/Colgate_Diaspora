@@ -1,16 +1,11 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import PokeCard from '../components/cards/PokeCard'
 import PodcastBar from '../components/ui/PodcastBar'
 import members from '../data/members'
 import staticEvents from '../data/events'
-
-const STORAGE_KEY = 'cd_custom_events'
-function loadCustomEvents() {
-  try { return JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]') }
-  catch { return [] }
-}
+import { supabase } from '../lib/supabase'
 
 function parseDate(iso) { return new Date(iso + 'T12:00:00') }
 
@@ -24,9 +19,9 @@ const TYPE_TAGS = {
   other:           'Event',
 }
 
-function getNextEvent() {
+function pickNextEvent(dbEvents) {
   const now = new Date()
-  const all = [...staticEvents, ...loadCustomEvents()]
+  const all = [...staticEvents, ...dbEvents]
   const upcoming = all
     .filter(e => parseDate(e.date) >= now)
     .sort((a, b) => parseDate(a.date) - parseDate(b.date))
@@ -273,7 +268,15 @@ export default function Home() {
   const champion = members.find(m => m.id === siteConfig.currentChampion.memberId)
   const loser    = members.find(m => m.id === siteConfig.currentLoser.memberId)
   const { currentChampion: champ, currentLoser: loserCfg, currentSeason, latestPodcast } = siteConfig
-  const nextEvent = getNextEvent()
+
+  const [nextEvent, setNextEvent] = useState(() => pickNextEvent([]))
+
+  useEffect(() => {
+    supabase
+      .from('events')
+      .select('*')
+      .then(({ data }) => { if (data) setNextEvent(pickNextEvent(data)) })
+  }, [])
 
   return (
     <div style={{ minHeight: '100vh' }}>
