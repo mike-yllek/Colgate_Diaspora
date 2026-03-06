@@ -8,7 +8,7 @@ const members = [
     location: "Seattle, WA",
   },
   {
-    id: "mike",   name: "Mike",   role: "Founder & Emeritus Commissioner",
+    id: "mike",   name: "Mike",   role: "Founder",
     class: "Colgate '12", active: true,  alumni: false,
     photo: "/images/members/mike.jpg",
     photoPosition: "center 10%",

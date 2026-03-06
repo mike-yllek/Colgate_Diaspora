@@ -488,15 +488,6 @@ export default function Bios() {
           }}>
             The Crew
           </h1>
-          <p style={{
-            fontFamily: 'var(--font-body)',
-            fontSize: '0.95rem',
-            color: 'var(--cream)',
-            opacity: 0.38,
-            letterSpacing: '0.08em',
-          }}>
-            10 active members. 2 legends. 1 league.
-          </p>
           <div style={{
             width: '80px',
             height: '1px',

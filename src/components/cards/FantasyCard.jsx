@@ -94,8 +94,7 @@ export default function FantasyCard({ card }) {
           style={{
             width: '100%',
             height: '100%',
-            objectFit: 'cover',
-            objectPosition: 'center top',
+            objectFit: 'contain',
             display: 'block',
           }}
           onError={e => { e.currentTarget.style.display = 'none' }}
