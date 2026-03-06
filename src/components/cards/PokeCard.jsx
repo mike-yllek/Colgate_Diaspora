@@ -271,6 +271,7 @@ export default function PokeCard({
             {flavorText && (
               <div style={{
                 margin: '8px 10px',
+                minHeight: '52px',
                 padding: '5px 8px',
                 borderLeft: `3px solid ${isLoser ? '#444' : 'var(--gold)'}`,
                 background: 'rgba(0,0,0,0.28)',
