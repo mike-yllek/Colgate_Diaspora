@@ -52,7 +52,8 @@ export const POWER = [
    which may differ from the last-place regular-season finisher.
    ─────────────────────────────────────────────────────────────────────── */
 export const TOILET_OVERRIDES = {
-  '2023': 'Kiri',
+  '2022': 'Kiri',
+  '2023': 'Ben',
   '2024': 'Bobby',
   '2025': 'Kenley',
 }
