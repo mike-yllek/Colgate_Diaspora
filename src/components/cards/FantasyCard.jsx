@@ -16,9 +16,8 @@ const TYPE_ICONS = {
   ice: '❄', fighting: '👊', grass: '🌿', fainted: '💀',
 }
 
-// Card inner dimensions (border/padding adds ~6px around these)
+// Card inner width (border/padding adds ~6px; height grows with content)
 const W = 294
-const H = 430
 
 export default function FantasyCard({ card }) {
   const [flipped, setFlipped] = useState(false)
@@ -27,8 +26,7 @@ export default function FantasyCard({ card }) {
 
   const cardFront = (
     <div style={{
-      position: 'absolute',
-      inset: 0,
+      position: 'relative',
       backfaceVisibility: 'hidden',
       WebkitBackfaceVisibility: 'hidden',
       transform: 'rotateY(180deg)',
@@ -80,21 +78,18 @@ export default function FantasyCard({ card }) {
 
       {/* ── Art ── */}
       <div style={{
-        height: '180px',
-        flexShrink: 0,
-        overflow: 'hidden',
         margin: '4px 5px',
         borderRadius: '5px',
         border: `1px solid ${tc.color}44`,
-        position: 'relative',
+        overflow: 'hidden',
+        flexShrink: 0,
       }}>
         <img
           src={card.image}
           alt={card.pokeName}
           style={{
             width: '100%',
-            height: '100%',
-            objectFit: 'contain',
+            height: 'auto',
             display: 'block',
           }}
           onError={e => { e.currentTarget.style.display = 'none' }}
@@ -324,7 +319,6 @@ export default function FantasyCard({ card }) {
     <div style={{
       position: 'relative',
       width: `${W}px`,
-      height: `${H}px`,
       transformStyle: 'preserve-3d',
       transition: 'transform 0.6s cubic-bezier(0.4, 0, 0.2, 1)',
       transform: flipped ? 'rotateY(180deg)' : 'rotateY(0deg)',
