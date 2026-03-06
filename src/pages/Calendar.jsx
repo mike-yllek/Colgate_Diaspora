@@ -1,13 +1,8 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { motion } from 'framer-motion'
 import { Link } from 'react-router-dom'
 import events from '../data/events'
-
-const STORAGE_KEY = 'cd_custom_events'
-function loadCustomEvents() {
-  try { return JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]') }
-  catch { return [] }
-}
+import { supabase } from '../lib/supabase'
 
 /* ── Date helpers ─────────────────────────────────────────────────────── */
 const TODAY = new Date()
@@ -474,7 +469,17 @@ function SectionLabel({ children, faded = false }) {
 
 /* ── Page ────────────────────────────────────────────────────────────── */
 export default function Calendar() {
-  const allEvents = [...events, ...loadCustomEvents()]
+  const [dbEvents, setDbEvents] = useState([])
+
+  useEffect(() => {
+    supabase
+      .from('events')
+      .select('*')
+      .order('date', { ascending: true })
+      .then(({ data }) => { if (data) setDbEvents(data) })
+  }, [])
+
+  const allEvents = [...events, ...dbEvents]
   const sorted   = [...allEvents].sort((a, b) => parseDate(a.date) - parseDate(b.date))
   const upcoming = sorted.filter(e => !isPast(e.date))
   const past     = sorted.filter(e => isPast(e.date)).reverse() // most recent first

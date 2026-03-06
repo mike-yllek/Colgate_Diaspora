@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { useNavigate, Link } from 'react-router-dom'
 import { motion } from 'framer-motion'
+import { supabase } from '../lib/supabase'
 
 const TYPE_OPTIONS = [
   { value: 'bookclub',        label: '📚 Book Club'        },
@@ -8,19 +9,6 @@ const TYPE_OPTIONS = [
   { value: 'fantasyfootball', label: '🏈 Fantasy Football' },
   { value: 'other',           label: '✨ Other'            },
 ]
-
-const STORAGE_KEY = 'cd_custom_events'
-
-function loadCustomEvents() {
-  try { return JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]') }
-  catch { return [] }
-}
-
-function saveCustomEvent(event) {
-  const existing = loadCustomEvents()
-  const next = [...existing, event]
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(next))
-}
 
 /* ── Input wrapper ─────────────────────────────────────────────────── */
 function Field({ label, hint, children }) {
@@ -89,24 +77,26 @@ export default function AddEvent() {
   const borderColor = (key) =>
     focused === key ? 'rgba(200,168,75,0.7)' : 'rgba(200,168,75,0.28)'
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault()
     if (!form.title.trim() || !form.date) return
 
     const description = [form.description.trim(), form.notes.trim()]
       .filter(Boolean).join('\n\n')
 
-    const newEvent = {
-      id: `custom_${Date.now()}`,
-      title: form.title.trim(),
-      date: form.date,
-      type: form.type,
+    const { error } = await supabase.from('events').insert({
+      title:       form.title.trim(),
+      date:        form.date,
+      type:        form.type,
       description: description || null,
-      location: form.location.trim() || null,
-      addToCalendarLink: null,
+      location:    form.location.trim() || null,
+    })
+
+    if (error) {
+      console.error('Failed to save event:', error)
+      return
     }
 
-    saveCustomEvent(newEvent)
     setSubmitted(true)
     setTimeout(() => navigate('/calendar'), 1200)
   }
