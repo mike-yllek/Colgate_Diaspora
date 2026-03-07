@@ -10,6 +10,7 @@ import Podcasts from './pages/Podcasts'
 import BookClub from './pages/BookClub'
 import OhHellLobby from './pages/OhHell/index'
 import OhHellGame from './pages/OhHell/Game'
+import Note from './pages/Note'
 
 function App() {
   return (
@@ -26,6 +27,7 @@ function App() {
             <Route path="book-club" element={<BookClub />} />
             <Route path="oh-hell" element={<OhHellLobby />} />
             <Route path="oh-hell/:roomId" element={<OhHellGame />} />
+            <Route path="note" element={<Note />} />
           </Route>
         </Routes>
       </BrowserRouter>
