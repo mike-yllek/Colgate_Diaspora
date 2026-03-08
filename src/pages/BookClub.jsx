@@ -1,4 +1,6 @@
-import { motion } from 'framer-motion'
+import { useState, useEffect } from 'react'
+import { motion, AnimatePresence } from 'framer-motion'
+import { supabase } from '../lib/supabase'
 
 const PAST_BOOKS = [
   {
@@ -61,7 +63,345 @@ const CURRENT_BOOK = {
   description: null,
 }
 
+function StarPicker({ value, onChange }) {
+  const [hovered, setHovered] = useState(0)
+  return (
+    <div style={{ display: 'flex', gap: '4px', alignItems: 'center' }}>
+      {[1, 2, 3, 4, 5].map(n => {
+        const filled = n <= (hovered || value)
+        return (
+          <button
+            key={n}
+            type="button"
+            onClick={() => onChange(value === n ? 0 : n)}
+            onMouseEnter={() => setHovered(n)}
+            onMouseLeave={() => setHovered(0)}
+            style={{
+              background: 'none',
+              border: 'none',
+              padding: '2px',
+              cursor: 'pointer',
+              fontSize: '1.4rem',
+              color: filled ? 'var(--gold)' : 'rgba(200,168,75,0.2)',
+              transition: 'color 0.1s, transform 0.1s',
+              transform: hovered === n ? 'scale(1.2)' : 'scale(1)',
+              lineHeight: 1,
+            }}
+          >
+            ★
+          </button>
+        )
+      })}
+      {value > 0 && (
+        <button
+          type="button"
+          onClick={() => onChange(0)}
+          style={{
+            background: 'none',
+            border: 'none',
+            padding: '2px 6px',
+            cursor: 'pointer',
+            fontSize: '0.6rem',
+            letterSpacing: '0.1em',
+            fontFamily: 'var(--font-serif)',
+            textTransform: 'uppercase',
+            color: 'rgba(200,168,75,0.35)',
+            transition: 'color 0.15s',
+          }}
+          onMouseEnter={e => e.currentTarget.style.color = 'rgba(200,168,75,0.7)'}
+          onMouseLeave={e => e.currentTarget.style.color = 'rgba(200,168,75,0.35)'}
+        >
+          Clear
+        </button>
+      )}
+    </div>
+  )
+}
+
+function RatingBadge({ reviews }) {
+  const rated = reviews.filter(r => r.rating > 0)
+  if (rated.length === 0) return (
+    <span style={{
+      fontFamily: 'var(--font-serif)',
+      fontSize: '0.65rem',
+      letterSpacing: '0.08em',
+      color: 'rgba(200,168,75,0.3)',
+    }}>
+      No ratings yet
+    </span>
+  )
+  const avg = (rated.reduce((s, r) => s + r.rating, 0) / rated.length).toFixed(1)
+  return (
+    <span style={{
+      fontFamily: 'var(--font-serif)',
+      fontSize: '0.78rem',
+      color: 'var(--gold)',
+      display: 'flex',
+      alignItems: 'center',
+      gap: '4px',
+    }}>
+      <span style={{ fontSize: '0.9rem' }}>★</span>
+      <span style={{ fontWeight: 600 }}>{avg}</span>
+      <span style={{ opacity: 0.4, fontSize: '0.65rem' }}>({rated.length})</span>
+    </span>
+  )
+}
+
+function ReviewPanel({ book, reviews, onNewReview }) {
+  const [name, setName] = useState('')
+  const [rating, setRating] = useState(0)
+  const [comment, setComment] = useState('')
+  const [submitting, setSubmitting] = useState(false)
+  const [submitted, setSubmitted] = useState(false)
+  const [error, setError] = useState('')
+
+  async function handleSubmit(e) {
+    e.preventDefault()
+    if (!name.trim()) { setError('Please enter your name.'); return }
+    if (!rating && !comment.trim()) { setError('Add a star rating, a comment, or both.'); return }
+    setError('')
+    setSubmitting(true)
+    const { error: dbErr } = await supabase.from('book_reviews').insert({
+      book_title: book.title,
+      reviewer_name: name.trim(),
+      rating: rating || null,
+      comment: comment.trim() || null,
+    })
+    if (dbErr) {
+      setError('Something went wrong. Try again.')
+      setSubmitting(false)
+      return
+    }
+    onNewReview()
+    setName('')
+    setRating(0)
+    setComment('')
+    setSubmitting(false)
+    setSubmitted(true)
+    setTimeout(() => setSubmitted(false), 3000)
+  }
+
+  return (
+    <motion.div
+      initial={{ opacity: 0, height: 0 }}
+      animate={{ opacity: 1, height: 'auto' }}
+      exit={{ opacity: 0, height: 0 }}
+      transition={{ duration: 0.25 }}
+      style={{ overflow: 'hidden' }}
+    >
+      <div style={{
+        borderTop: '1px solid rgba(200,168,75,0.12)',
+        marginTop: '1.25rem',
+        paddingTop: '1.25rem',
+      }}>
+
+        {/* Form */}
+        <form onSubmit={handleSubmit} style={{ marginBottom: reviews.length > 0 ? '1.5rem' : 0 }}>
+          <p style={{
+            fontFamily: 'var(--font-serif)',
+            fontSize: '0.6rem',
+            letterSpacing: '0.2em',
+            textTransform: 'uppercase',
+            color: 'var(--gold)',
+            opacity: 0.55,
+            marginBottom: '0.875rem',
+          }}>
+            Leave a Review
+          </p>
+
+          {/* Name */}
+          <input
+            type="text"
+            placeholder="Your name"
+            value={name}
+            onChange={e => setName(e.target.value)}
+            maxLength={40}
+            style={{
+              width: '100%',
+              background: 'rgba(255,255,255,0.04)',
+              border: '1px solid rgba(200,168,75,0.2)',
+              borderRadius: '8px',
+              padding: '8px 12px',
+              fontFamily: 'var(--font-body)',
+              fontSize: '0.85rem',
+              color: 'var(--cream)',
+              outline: 'none',
+              marginBottom: '0.75rem',
+              boxSizing: 'border-box',
+            }}
+            onFocus={e => e.target.style.borderColor = 'rgba(200,168,75,0.5)'}
+            onBlur={e => e.target.style.borderColor = 'rgba(200,168,75,0.2)'}
+          />
+
+          {/* Stars */}
+          <div style={{ marginBottom: '0.75rem' }}>
+            <StarPicker value={rating} onChange={setRating} />
+          </div>
+
+          {/* Comment */}
+          <textarea
+            placeholder="Write a comment... (optional)"
+            value={comment}
+            onChange={e => setComment(e.target.value)}
+            maxLength={500}
+            rows={3}
+            style={{
+              width: '100%',
+              background: 'rgba(255,255,255,0.04)',
+              border: '1px solid rgba(200,168,75,0.2)',
+              borderRadius: '8px',
+              padding: '8px 12px',
+              fontFamily: 'var(--font-body)',
+              fontSize: '0.85rem',
+              color: 'var(--cream)',
+              outline: 'none',
+              resize: 'vertical',
+              marginBottom: '0.75rem',
+              boxSizing: 'border-box',
+              lineHeight: 1.5,
+            }}
+            onFocus={e => e.target.style.borderColor = 'rgba(200,168,75,0.5)'}
+            onBlur={e => e.target.style.borderColor = 'rgba(200,168,75,0.2)'}
+          />
+
+          {error && (
+            <p style={{
+              fontFamily: 'var(--font-body)',
+              fontSize: '0.75rem',
+              color: '#e07070',
+              marginBottom: '0.5rem',
+            }}>
+              {error}
+            </p>
+          )}
+
+          <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+            <button
+              type="submit"
+              disabled={submitting}
+              style={{
+                fontFamily: 'var(--font-serif)',
+                fontSize: '0.65rem',
+                letterSpacing: '0.14em',
+                textTransform: 'uppercase',
+                color: submitting ? 'rgba(200,168,75,0.4)' : 'var(--gold)',
+                background: 'transparent',
+                border: '1px solid rgba(200,168,75,0.38)',
+                borderRadius: '20px',
+                padding: '6px 18px',
+                cursor: submitting ? 'not-allowed' : 'pointer',
+                transition: 'all 0.2s',
+              }}
+              onMouseEnter={e => { if (!submitting) e.currentTarget.style.background = 'rgba(200,168,75,0.1)' }}
+              onMouseLeave={e => e.currentTarget.style.background = 'transparent'}
+            >
+              {submitting ? 'Posting...' : 'Post'}
+            </button>
+            <AnimatePresence>
+              {submitted && (
+                <motion.span
+                  initial={{ opacity: 0, x: -6 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  exit={{ opacity: 0 }}
+                  style={{
+                    fontFamily: 'var(--font-serif)',
+                    fontSize: '0.7rem',
+                    color: 'rgba(200,168,75,0.7)',
+                  }}
+                >
+                  ✓ Posted!
+                </motion.span>
+              )}
+            </AnimatePresence>
+          </div>
+        </form>
+
+        {/* Existing reviews */}
+        {reviews.length > 0 && (
+          <div style={{
+            borderTop: '1px solid rgba(200,168,75,0.1)',
+            paddingTop: '1.25rem',
+            display: 'flex',
+            flexDirection: 'column',
+            gap: '0.875rem',
+          }}>
+            <p style={{
+              fontFamily: 'var(--font-serif)',
+              fontSize: '0.6rem',
+              letterSpacing: '0.2em',
+              textTransform: 'uppercase',
+              color: 'var(--gold)',
+              opacity: 0.45,
+              marginBottom: '0.25rem',
+            }}>
+              Reviews
+            </p>
+            {reviews.map(r => (
+              <div key={r.id} style={{
+                padding: '10px 14px',
+                background: 'rgba(255,255,255,0.03)',
+                borderRadius: '10px',
+                border: '1px solid rgba(200,168,75,0.1)',
+              }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: r.comment ? '6px' : 0 }}>
+                  <span style={{
+                    fontFamily: 'var(--font-display)',
+                    fontSize: '0.78rem',
+                    color: 'var(--gold)',
+                    opacity: 0.85,
+                  }}>
+                    {r.reviewer_name}
+                  </span>
+                  {r.rating > 0 && (
+                    <span style={{ color: 'var(--gold)', fontSize: '0.7rem', letterSpacing: '1px' }}>
+                      {'★'.repeat(r.rating)}{'☆'.repeat(5 - r.rating)}
+                    </span>
+                  )}
+                  <span style={{
+                    fontFamily: 'var(--font-serif)',
+                    fontSize: '0.58rem',
+                    color: 'rgba(200,168,75,0.3)',
+                    marginLeft: 'auto',
+                  }}>
+                    {new Date(r.created_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
+                  </span>
+                </div>
+                {r.comment && (
+                  <p style={{
+                    fontFamily: 'var(--font-body)',
+                    fontSize: '0.82rem',
+                    color: 'var(--cream)',
+                    opacity: 0.65,
+                    lineHeight: 1.55,
+                    margin: 0,
+                  }}>
+                    {r.comment}
+                  </p>
+                )}
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
+    </motion.div>
+  )
+}
+
 function BookCard({ book, isCurrent }) {
+  const [reviews, setReviews] = useState([])
+  const [showPanel, setShowPanel] = useState(false)
+
+  async function fetchReviews() {
+    const { data } = await supabase
+      .from('book_reviews')
+      .select('*')
+      .eq('book_title', book.title)
+      .order('created_at', { ascending: false })
+    setReviews(data || [])
+  }
+
+  useEffect(() => { fetchReviews() }, [book.title])
+
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
@@ -144,11 +484,7 @@ function BookCard({ book, isCurrent }) {
         flexWrap: 'wrap',
         gap: '0.75rem',
       }}>
-        <div style={{
-          display: 'flex',
-          alignItems: 'center',
-          gap: '0.5rem',
-        }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
           <span style={{
             fontFamily: 'var(--font-serif)',
             fontSize: '0.6rem',
@@ -197,6 +533,46 @@ function BookCard({ book, isCurrent }) {
           View Book →
         </a>
       </div>
+
+      {/* Rating bar */}
+      <div style={{
+        borderTop: '1px solid rgba(200,168,75,0.12)',
+        marginTop: '1.25rem',
+        paddingTop: '1rem',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+        gap: '1rem',
+      }}>
+        <RatingBadge reviews={reviews} />
+        <button
+          onClick={() => setShowPanel(v => !v)}
+          style={{
+            fontFamily: 'var(--font-serif)',
+            fontSize: '0.62rem',
+            letterSpacing: '0.14em',
+            textTransform: 'uppercase',
+            color: showPanel ? 'rgba(200,168,75,0.5)' : 'var(--gold)',
+            background: 'transparent',
+            border: '1px solid rgba(200,168,75,0.25)',
+            borderRadius: '20px',
+            padding: '5px 14px',
+            cursor: 'pointer',
+            transition: 'all 0.2s',
+            flexShrink: 0,
+          }}
+          onMouseEnter={e => e.currentTarget.style.background = 'rgba(200,168,75,0.07)'}
+          onMouseLeave={e => e.currentTarget.style.background = 'transparent'}
+        >
+          {showPanel ? '✕ Close' : '★ Rate & Review'}
+        </button>
+      </div>
+
+      <AnimatePresence>
+        {showPanel && (
+          <ReviewPanel book={book} reviews={reviews} onNewReview={fetchReviews} />
+        )}
+      </AnimatePresence>
     </motion.div>
   )
 }
@@ -269,7 +645,7 @@ export default function BookClub() {
         </div>
       </section>
 
-      {/* Placeholder for past books */}
+      {/* Past books */}
       <section>
         <div style={{
           display: 'flex',
