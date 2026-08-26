@@ -4,6 +4,13 @@ import { supabase } from '../lib/supabase'
 
 const PAST_BOOKS = [
   {
+    title:    'The Splendid and the Vile',
+    author:   'Erik Larson',
+    selector: 'Kenley',
+    link:     'https://www.goodreads.com/search?q=The+Splendid+and+the+Vile+Erik+Larson',
+    description: null,
+  },
+  {
     title:    'Flashlight',
     author:   'Susan Choi',
     selector: 'Mike',
@@ -55,11 +62,11 @@ const PAST_BOOKS = [
 ]
 
 const CURRENT_BOOK = {
-  title:    'The Splendid and the Vile',
-  author:   'Erik Larson',
-  selector: 'Kenley',
+  title:    'I Have Some Questions for You',
+  author:   'Rebecca Makkai',
+  selector: '',
   year:     2026,
-  link:     'https://www.goodreads.com/search?q=The+Splendid+and+the+Vile+Erik+Larson',
+  link:     'https://www.goodreads.com/book/show/58724014-i-have-some-questions-for-you',
   description: null,
 }
 
