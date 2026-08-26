@@ -72,7 +72,7 @@ const CURRENT_BOOK = {
   title:    'I Have Some Questions for You',
   author:   'Rebecca Makkai',
   selector: 'Jack',
-  link:     'https://www.goodreads.com/book/show/58724014-i-have-some-questions-for-you',
+  link:     'https://www.goodreads.com/book/show/61053829-i-have-some-questions-for-you',
 }
 
 /* ─── Nav tiles ──────────────────────────────────────────────────── */

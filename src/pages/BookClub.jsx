@@ -66,7 +66,7 @@ const CURRENT_BOOK = {
   author:   'Rebecca Makkai',
   selector: 'Jack',
   year:     2026,
-  link:     'https://www.goodreads.com/book/show/58724014-i-have-some-questions-for-you',
+  link:     'https://www.goodreads.com/book/show/61053829-i-have-some-questions-for-you',
   description: null,
 }
 
