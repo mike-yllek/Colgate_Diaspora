@@ -77,32 +77,55 @@ const CURRENT_BOOK = {
   description: null,
 }
 
+function StarIcon({ fill, size = '1.4rem' }) {
+  const gold = 'var(--gold)'
+  const dim  = 'rgba(200,168,75,0.2)'
+  if (fill === 'full')  return <span style={{ fontSize: size, color: gold, lineHeight: 1 }}>★</span>
+  if (fill === 'empty') return <span style={{ fontSize: size, color: dim,  lineHeight: 1 }}>★</span>
+  return (
+    <span style={{ position: 'relative', display: 'inline-block', fontSize: size, lineHeight: 1 }}>
+      <span style={{ color: dim }}>★</span>
+      <span style={{ position: 'absolute', left: 0, top: 0, width: '50%', overflow: 'hidden', color: gold, whiteSpace: 'nowrap' }}>★</span>
+    </span>
+  )
+}
+
+function starFill(n, val) {
+  if (val >= n)       return 'full'
+  if (val >= n - 0.5) return 'half'
+  return 'empty'
+}
+
 function StarPicker({ value, onChange }) {
   const [hovered, setHovered] = useState(0)
+
+  function halfVal(e, n) {
+    const rect = e.currentTarget.getBoundingClientRect()
+    return (e.clientX - rect.left) < rect.width / 2 ? n - 0.5 : n
+  }
+
   return (
     <div style={{ display: 'flex', gap: '4px', alignItems: 'center' }}>
       {[1, 2, 3, 4, 5].map(n => {
-        const filled = n <= (hovered || value)
+        const display = hovered || value
         return (
           <button
             key={n}
             type="button"
-            onClick={() => onChange(value === n ? 0 : n)}
-            onMouseEnter={() => setHovered(n)}
+            onMouseMove={e => setHovered(halfVal(e, n))}
             onMouseLeave={() => setHovered(0)}
+            onClick={e => { const v = halfVal(e, n); onChange(value === v ? 0 : v) }}
             style={{
               background: 'none',
               border: 'none',
               padding: '2px',
               cursor: 'pointer',
-              fontSize: '1.4rem',
-              color: filled ? 'var(--gold)' : 'rgba(200,168,75,0.2)',
-              transition: 'color 0.1s, transform 0.1s',
-              transform: hovered === n ? 'scale(1.2)' : 'scale(1)',
+              transition: 'transform 0.1s',
+              transform: Math.ceil(hovered) === n ? 'scale(1.2)' : 'scale(1)',
               lineHeight: 1,
             }}
           >
-            ★
+            <StarIcon fill={starFill(n, display)} />
           </button>
         )
       })}
@@ -367,8 +390,8 @@ function ReviewPanel({ book, reviews, onNewReview }) {
                     {r.reviewer_name}
                   </span>
                   {r.rating > 0 && (
-                    <span style={{ color: 'var(--gold)', fontSize: '0.7rem', letterSpacing: '1px' }}>
-                      {'★'.repeat(r.rating)}{'☆'.repeat(5 - r.rating)}
+                    <span style={{ display: 'flex', gap: '1px' }}>
+                      {[1,2,3,4,5].map(n => <StarIcon key={n} fill={starFill(n, r.rating)} size="0.7rem" />)}
                     </span>
                   )}
                   <span style={{
