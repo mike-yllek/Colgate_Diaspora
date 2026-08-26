@@ -46,6 +46,13 @@ const PAST_BOOKS = [
     description: null,
   },
   {
+    title:    'Remarkably Bright Creatures',
+    author:   'Shelby Van Pelt',
+    selector: 'Ollie',
+    link:     'https://www.goodreads.com/book/show/58733693-remarkably-bright-creatures',
+    description: null,
+  },
+  {
     title:    'These Silent Woods',
     author:   'Kimi Cunningham Grant',
     selector: 'Andy',
