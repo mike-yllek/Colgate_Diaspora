@@ -7,8 +7,8 @@ export const DRAFT_TEAMS = [
   {
     id: 'kenley',
     manager: 'Kenley',
-    grade: 'A+',
-    blurb: "Bijan Robinson fell into her lap at 1.2 and she never looked back — Kittle, McLaurin, Sutton and Worthy give this roster a receiving corps that borders on unfair. The only question left is whether a great draft finally turns into a great record.",
+    grade: 'C+',
+    blurb: "Bijan at 1.2 is the one unimpeachable pick, and then it falls apart. Kittle is coming off a torn Achilles and may miss Week 1, Skattebo is rebuilding an ankle that was dislocated and fractured, and Jaylen Warren now splits a Mike McCarthy backfield with Rico Dowdle that caps him at flex. Sutton at 31 is a volume-dependent WR3 in a Denver room that just added Waddle. Lots of names, one difference-maker.",
     picks: [
       { round: 1,  pos: 'RB',  player: 'Bijan Robinson',           nfl: 'ATL' },
       { round: 2,  pos: 'WR',  player: 'Drake London',             nfl: 'ATL' },
@@ -31,7 +31,7 @@ export const DRAFT_TEAMS = [
     id: 'bobby',
     manager: 'Bobby',
     grade: 'A',
-    blurb: "Cook and Nacua headline a roster that somehow also rostered Kelce AND Bowers at tight end. Deep, versatile, and dangerous — coming off a 10-4 near-miss, the talent finally looks like it might match the record.",
+    blurb: "The most complete roster in the league. Cook, Hall and Jacobs is the deepest backfield anyone assembled, Nacua leads a receiver room with real bodies behind him, Bowers is the top TE off the board, and Jayden Daniels is a top-five QB. Kelce in the 11th is redundant behind Bowers — that's the only wasted pick on the sheet.",
     picks: [
       { round: 1,  pos: 'RB',  player: 'James Cook',           nfl: 'BUF' },
       { round: 2,  pos: 'WR',  player: 'Puka Nacua',           nfl: 'LAR' },
@@ -54,7 +54,7 @@ export const DRAFT_TEAMS = [
     id: 'joe',
     manager: 'Joe',
     grade: 'A-',
-    blurb: "Back-to-back RB1s in Gibbs and Jeanty is about as clean a start as it gets, and grabbing Josh Allen at 3.1 solves the QB question for the year. Wide receiver is a little thin beyond Egbuka and Waddle, but the champ drafted like a champ.",
+    blurb: "Back-to-back top-five RBs in Gibbs and Jeanty, then Josh Allen at 3.1 — the two positions that decide leagues, locked down in three picks. Receiver is genuinely thin behind Egbuka and Waddle, which is the only thing keeping this from an A. The champ drafted like a champ.",
     picks: [
       { round: 1,  pos: 'RB',  player: 'Jahmyr Gibbs',         nfl: 'DET' },
       { round: 2,  pos: 'RB',  player: 'Ashton Jeanty',        nfl: 'LV'  },
@@ -76,8 +76,8 @@ export const DRAFT_TEAMS = [
   {
     id: 'jack',
     manager: 'Jack',
-    grade: 'B+',
-    blurb: "Smith-Njigba and Chase Brown to start, then Joe Burrow fell to him at 5.7 — quietly one of the deeper rosters at every position. If a full season with Burrow finally clicks, this is a sneaky playoff team fighting off the ghosts of four losing seasons in the last five.",
+    grade: 'B',
+    blurb: "Smith-Njigba and Chase Brown to open, then Burrow at 5.7 — quietly one of the more balanced rosters here, with McMillan, Higgins and Odunze giving real receiver depth. Nothing on this roster is elite outside JSN, but nothing is broken either. A solid, unspectacular draft fighting four losing seasons in five.",
     picks: [
       { round: 1,  pos: 'WR',  player: 'Jaxon Smith-Njigba',   nfl: 'SEA' },
       { round: 2,  pos: 'RB',  player: 'Chase Brown',          nfl: 'CIN' },
@@ -99,8 +99,8 @@ export const DRAFT_TEAMS = [
   {
     id: 'mike',
     manager: 'Mike',
-    grade: 'B+',
-    blurb: "McCaffrey and Achane in the first two rounds is as much ceiling as it is risk — both are one hamstring away from wrecking this whole draft. Pickens, Garrett Wilson and DJ Moore give it a real floor if the running backs cooperate.",
+    grade: 'B',
+    blurb: "McCaffrey and Achane in the first two rounds is as much ceiling as it is risk — both are one soft-tissue injury away from wrecking the whole draft, and neither has made it through a clean season recently. Pickens, Garrett Wilson and D.J. Moore give it a real floor, and Judkins is a genuine hedge. High variance, playoff-caliber if it breaks right.",
     picks: [
       { round: 1,  pos: 'RB',  player: 'Christian McCaffrey',  nfl: 'SF'  },
       { round: 2,  pos: 'RB',  player: "De'Von Achane",        nfl: 'MIA' },
@@ -123,7 +123,7 @@ export const DRAFT_TEAMS = [
     id: 'dave',
     manager: 'Dave',
     grade: 'B+',
-    blurb: "Ja'Marr Chase at 1.4 is a top-three overall talent, and taking three running backs in the first four rounds — Walker, rookie Jeremiyah Love, and Swift — gives this roster real workhorse upside if the touches shake out. Jalen Hurts at QB6 was great value, but wide receiver depth beyond Chase and Flowers is thin.",
+    blurb: "Ja'Marr Chase at 1.4 is the best player in this draft, and stacking Walker, rookie Jeremiyah Love (3rd overall to Arizona) and Swift behind him builds the kind of backfield volume that wins weeks. Hurts in the 6th is the single best value pick anyone made. Receiver thins out fast after Chase and Flowers, but the top of this roster is legitimately excellent.",
     picks: [
       { round: 1,  pos: 'WR',  player: "Ja'Marr Chase",        nfl: 'CIN' },
       { round: 2,  pos: 'RB',  player: 'Kenneth Walker III',   nfl: 'KC'  },
@@ -145,8 +145,8 @@ export const DRAFT_TEAMS = [
   {
     id: 'ollie',
     manager: 'Ollie',
-    grade: 'B',
-    blurb: "Jonathan Taylor and Kyren Williams give the commissioner a legitimate 1-2 punch at running back, and drafting Drake Maye and Bo Nix as a QB platoon is a classic Ollie hedge. A.J. Brown and Marvin Harrison Jr. are boom-or-bust bets at receiver.",
+    grade: 'B+',
+    blurb: "Jonathan Taylor and Kyren Williams is a genuine 1-2 workhorse punch, and A.J. Brown in New England — reunited with Vrabel as the clear No. 1 — is being priced below what he'll produce. McConkey and Loveland are strong middle-round adds. Waiting until the 11th for Maye and pairing him with Nix is a real risk, but the skill positions carry it.",
     picks: [
       { round: 1,  pos: 'RB',  player: 'Jonathan Taylor',      nfl: 'IND' },
       { round: 2,  pos: 'WR',  player: 'A.J. Brown',           nfl: 'NE'  },
@@ -169,7 +169,7 @@ export const DRAFT_TEAMS = [
     id: 'andy',
     manager: 'Andy',
     grade: 'B-',
-    blurb: "Amon-Ra St. Brown and Omarion Hampton is a fine start, and the 2022 champ has quietly built one of the most balanced rosters in the league again. No real weakness — but also nothing beyond pick one that screams best team in the league.",
+    blurb: "St. Brown is a top-five receiver and Hampton should see real volume in Los Angeles, but the roster gets ordinary in a hurry. Tuten, Mason and Corum are all committee backs, Caleb Williams is a QB2 masquerading as a starter, and Likely — good as the Giants move looks — was an 11th-round luxury. Competent, capped.",
     picks: [
       { round: 1,  pos: 'WR',  player: 'Amon-Ra St. Brown',    nfl: 'DET' },
       { round: 2,  pos: 'RB',  player: 'Omarion Hampton',      nfl: 'LAC' },
@@ -192,7 +192,7 @@ export const DRAFT_TEAMS = [
     id: 'ben',
     manager: 'Ben',
     grade: 'C+',
-    blurb: "Barkley and Henry at the top is genuinely great, but spending three separate picks on quarterbacks (Lamar Jackson, Trevor Lawrence, and Jaxson Dart) in a one-QB league is a real head-scratcher. That's bench space that could've gone to the receiver depth this roster badly needs.",
+    blurb: "Barkley, Henry, Nabers and Lamar is a top four almost nobody here can match — and then he spent three picks on quarterbacks in a one-QB league. Lawrence and Dart are two dead bench spots that should have gone to receiver depth, and Kincaid behind Pitts wastes a third. Elite core, genuinely careless construction.",
     picks: [
       { round: 1,  pos: 'RB',  player: 'Saquon Barkley',       nfl: 'PHI' },
       { round: 2,  pos: 'RB',  player: 'Derrick Henry',        nfl: 'BAL' },
@@ -214,8 +214,8 @@ export const DRAFT_TEAMS = [
   {
     id: 'kiri',
     manager: 'Kiri',
-    grade: 'C',
-    blurb: "Lamb and Jefferson give her the best wide receiver duo in the league, and Trey McBride plus Tucker Kraft is an absurd luxury at tight end — but she punted running back entirely. Montgomery, Dowdle and a string of committee backs isn't a plan, it's a prayer.",
+    grade: 'B-',
+    blurb: "Lamb and Jefferson is the best receiver duo anyone drafted, and the backfield is better than it looks — Montgomery is Houston's lead back after the trade from Detroit and Dowdle is drawing 1,000-yard projections in Pittsburgh. The real sin is McBride and Kraft: two top-eight tight ends when only one can start, in a draft where she needed a third receiver.",
     picks: [
       { round: 1,  pos: 'WR',  player: 'CeeDee Lamb',          nfl: 'DAL' },
       { round: 2,  pos: 'WR',  player: 'Justin Jefferson',     nfl: 'MIN' },
@@ -249,19 +249,22 @@ export const GRADE_COLORS = {
 }
 
 /* ── 2026 Predicted Standings ─────────────────────────────────────────────
-   A for-fun blend of this draft grade (55%) and each manager's all-time
-   POWER_SCORES (45%, see archiveData.js) — not science, just a bit part
-   for the commissioner to be wrong about come January.
+   Blend of this draft grade (55%) and each manager's all-time POWER_SCORES
+   (45%, see archiveData.js). Grades themselves are built on current 2026
+   projections, ADP and injury status — Kittle's Achilles, Skattebo's ankle,
+   the Warren/Dowdle committee, Sutton's age-31 target share, etc. — rather
+   than name recognition. Still a bit for the commissioner to be wrong about
+   come January.
    ─────────────────────────────────────────────────────────────────────── */
 export const PREDICTED_STANDINGS = [
-  { rank: 1,  manager: 'Joe',    tag: 'champion', blurb: "The two-time defending champ drafted like it, too. Until someone dethrones him, bet the house." },
-  { rank: 2,  manager: 'Mike',   blurb: "Best all-around roster not named Joe's, backed by a career .523 win rate. A lock for the playoffs again." },
-  { rank: 3,  manager: 'Dave',   blurb: "Chase at the top and a QB who runs (Hurts) is a proven formula — Dave's made the playoffs in 9 of 13 seasons." },
-  { rank: 4,  manager: 'Ollie',  blurb: "Two workhorse backs and a QB platoon most commissioners wouldn't dare try. Steady as always." },
-  { rank: 5,  manager: 'Ben',    blurb: "Barkley and Henry could drag this roster to the playoffs alone — if the three quarterbacks on his bench don't distract him." },
-  { rank: 6,  manager: 'Andy',   blurb: "No real weaknesses, no real ceiling. A quietly competitive team, same as it ever is." },
-  { rank: 7,  manager: 'Kenley', blurb: "The best draft in the league by a mile — but she's never finished better than 6th, and paper doesn't play the games." },
-  { rank: 8,  manager: 'Jack',   blurb: "Burrow at 5.7 was a steal and this roster has more sneaky depth than people realize. Still fighting recent history." },
-  { rank: 9,  manager: 'Bobby',  blurb: "The talent is undeniable — Cook, Nacua, Bowers, Kelce — but a career losing record says talent alone hasn't been enough." },
-  { rank: 10, manager: 'Kiri',   tag: 'toilet', blurb: "Elite at receiver, absent at running back. Unless waivers save her, it's a familiar last-place feeling." },
+  { rank: 1,  manager: 'Joe',    tag: 'champion', blurb: "Two elite backs, the best quarterback in football, and a 106–69 career record. The two-time defending champ drafted like it — bet the house until someone takes it from him." },
+  { rank: 2,  manager: 'Mike',   blurb: "The league's second-best power score meets a high-variance roster. If McCaffrey and Achane stay upright this is the best team here; if they don't, it's a long autumn." },
+  { rank: 3,  manager: 'Dave',   blurb: "Chase, three early backs, and Hurts at a sixth-round price. Nine playoff trips in thirteen years says he knows what to do with a roster this good." },
+  { rank: 4,  manager: 'Ollie',  blurb: "Taylor and Kyren give the commissioner the workhorse volume nobody else got. The Maye/Nix platoon is the wobble that keeps him out of the top three." },
+  { rank: 5,  manager: 'Ben',    blurb: "Barkley, Henry, Nabers and Lamar can carry a team to January on their own. Three quarterbacks and two tight ends on the bench is how you waste that." },
+  { rank: 6,  manager: 'Andy',   blurb: "The 2022 champ built another perfectly competent roster with no obvious hole and no real ceiling. Bubble team, as usual." },
+  { rank: 7,  manager: 'Bobby',  blurb: "Best draft in the league, worst track record in the league — 75–98 all-time and six playoff trips in thirteen years. This is the year the talent is finally undeniable. History says don't trust it." },
+  { rank: 8,  manager: 'Kiri',   blurb: "Lamb and Jefferson will win her some weeks outright. Spending premium picks on a second tight end instead of a third receiver will lose her others." },
+  { rank: 9,  manager: 'Jack',   blurb: "A balanced roster with no star beyond Smith-Njigba, attached to a 43.4% career win rate. Burrow staying healthy is the whole season." },
+  { rank: 10, manager: 'Kenley', tag: 'toilet', blurb: "Bijan is excellent. Behind him sit an Achilles recovery at tight end, a rebuilt ankle at running back, a committee back, and a 31-year-old WR3. Four playoff trips in thirteen years, and this draft didn't fix it." },
 ]

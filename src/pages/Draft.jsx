@@ -2,6 +2,12 @@ import { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { DRAFT_TEAMS, GRADE_COLORS, PREDICTED_STANDINGS } from '../data/draftBoard2026'
 
+/* Best grade first, so the page reads like a ranking. */
+const GRADE_ORDER = ['A+', 'A', 'A-', 'B+', 'B', 'B-', 'C+', 'C', 'C-', 'D']
+const RANKED_TEAMS = [...DRAFT_TEAMS].sort(
+  (a, b) => GRADE_ORDER.indexOf(a.grade) - GRADE_ORDER.indexOf(b.grade)
+)
+
 /* ─── Section label + extending line ─────────────────────────────────── */
 function SectionLabel({ icon, label, faded = false }) {
   return (
@@ -294,7 +300,7 @@ export default function Draft() {
           gridTemplateColumns: 'repeat(auto-fill, minmax(360px, 1fr))',
           gap: '1.5rem',
         }}>
-          {DRAFT_TEAMS.map((team, i) => (
+          {RANKED_TEAMS.map((team, i) => (
             <DraftCard key={team.id} team={team} i={i} />
           ))}
         </div>
@@ -320,7 +326,7 @@ export default function Draft() {
         textAlign: 'center',
         marginTop: '3rem',
       }}>
-        Grades are half-PPR, standard-lineup takes from the commissioner's desk — not science.
+        Grades are half-PPR takes built on 2026 projections, ADP and injury status — not science.
         Standings blend this draft grade with each manager's all-time power score. Ask again in January.
       </p>
 
