@@ -1,11 +1,10 @@
 import { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { DRAFT_TEAMS, GRADE_COLORS, PREDICTED_STANDINGS } from '../data/draftBoard2026'
+import { DRAFT_TEAMS, GRADE_COLORS, PREDICTED_STANDINGS, DRAFT_METRICS } from '../data/draftBoard2026'
 
-/* Best grade first, so the page reads like a ranking. */
-const GRADE_ORDER = ['A+', 'A', 'A-', 'B+', 'B', 'B-', 'C+', 'C', 'C-', 'D']
+/* Ordered by the measured composite rank, best first. */
 const RANKED_TEAMS = [...DRAFT_TEAMS].sort(
-  (a, b) => GRADE_ORDER.indexOf(a.grade) - GRADE_ORDER.indexOf(b.grade)
+  (a, b) => DRAFT_METRICS[a.id].rank - DRAFT_METRICS[b.id].rank
 )
 
 /* ─── Section label + extending line ─────────────────────────────────── */
@@ -56,6 +55,29 @@ function GradeBadge({ grade }) {
     }}>
       {grade}
     </div>
+  )
+}
+
+/* ─── Steal / reach delta vs consensus ADP ───────────────────────────── */
+function Delta({ pick }) {
+  const d = pick.pick - pick.adp
+  // Only flag moves big enough to be meaningful, and skip K/DEF where ADP is noise.
+  if (['K', 'DEF'].includes(pick.pos) || Math.abs(d) < 15) {
+    return <span style={{ width: '46px', flexShrink: 0 }} />
+  }
+  const steal = d > 0
+  return (
+    <span style={{
+      width: '46px',
+      flexShrink: 0,
+      textAlign: 'right',
+      fontFamily: 'var(--font-body)',
+      fontSize: '0.7rem',
+      fontWeight: 600,
+      color: steal ? 'rgba(120,190,130,0.85)' : 'rgba(200,110,100,0.85)',
+    }}>
+      {steal ? '+' : ''}{d}
+    </span>
   )
 }
 
@@ -112,6 +134,10 @@ function RosterTable({ picks }) {
               color: 'var(--cream)',
               opacity: 0.85,
               flex: 1,
+              minWidth: 0,
+              overflow: 'hidden',
+              textOverflow: 'ellipsis',
+              whiteSpace: 'nowrap',
             }}>
               {p.player}
             </span>
@@ -120,13 +146,95 @@ function RosterTable({ picks }) {
               fontSize: '0.6rem',
               color: 'var(--cream)',
               opacity: 0.35,
+              width: '30px',
+              flexShrink: 0,
             }}>
               {p.nfl}
             </span>
+            <span style={{
+              fontFamily: 'var(--font-body)',
+              fontSize: '0.68rem',
+              color: 'var(--cream)',
+              opacity: 0.3,
+              width: '42px',
+              flexShrink: 0,
+              textAlign: 'right',
+            }}>
+              #{p.adp}
+            </span>
+            <Delta pick={p} />
           </div>
         ))}
+        <p style={{
+          fontFamily: 'var(--font-body)',
+          fontSize: '0.62rem',
+          color: 'var(--cream)',
+          opacity: 0.3,
+          margin: '0.5rem 0 0',
+          lineHeight: 1.5,
+        }}>
+          #ADP = consensus overall rank. Green/red = spots the pick beat or trailed the market by.
+        </p>
       </div>
     </motion.div>
+  )
+}
+
+/* ─── Measured metrics behind the grade ──────────────────────────────── */
+function MetricStrip({ id }) {
+  const m = DRAFT_METRICS[id]
+  if (!m) return null
+  const cells = [
+    { label: 'Starters',  value: m.avgStarter, hint: 'avg ADP rank' },
+    { label: 'Top 5',     value: m.top5,       hint: 'sum ADP rank' },
+    { label: 'Net Value', value: m.netValue > 0 ? `+${m.netValue}` : m.netValue, hint: 'vs market' },
+  ]
+  return (
+    <div style={{
+      display: 'flex',
+      gap: '6px',
+      marginBottom: '1rem',
+      flexWrap: 'wrap',
+    }}>
+      {cells.map(c => (
+        <div key={c.label} style={{
+          flex: '1 1 90px',
+          padding: '6px 10px',
+          borderRadius: '8px',
+          background: 'rgba(255,255,255,0.03)',
+          border: '1px solid rgba(200,168,75,0.1)',
+        }}>
+          <div style={{
+            fontFamily: 'var(--font-serif)',
+            fontSize: '0.5rem',
+            letterSpacing: '0.12em',
+            textTransform: 'uppercase',
+            color: 'var(--gold)',
+            opacity: 0.55,
+          }}>
+            {c.label}
+          </div>
+          <div style={{
+            fontFamily: 'var(--font-body)',
+            fontSize: '0.95rem',
+            fontWeight: 600,
+            color: 'var(--cream)',
+            opacity: 0.8,
+            lineHeight: 1.3,
+          }}>
+            {c.value}
+          </div>
+          <div style={{
+            fontFamily: 'var(--font-body)',
+            fontSize: '0.55rem',
+            color: 'var(--cream)',
+            opacity: 0.3,
+          }}>
+            {c.hint}
+          </div>
+        </div>
+      ))}
+    </div>
   )
 }
 
@@ -168,6 +276,8 @@ function DraftCard({ team, i }) {
       }}>
         {team.blurb}
       </p>
+
+      <MetricStrip id={team.id} />
 
       <button
         onClick={() => setOpen(v => !v)}
@@ -326,8 +436,10 @@ export default function Draft() {
         textAlign: 'center',
         marginTop: '3rem',
       }}>
-        Grades are half-PPR takes built on 2026 projections, ADP and injury status — not science.
-        Standings blend this draft grade with each manager's all-time power score. Ask again in January.
+        Every pick was matched against Fantasy Football Calculator's half-PPR consensus ADP
+        (3,064 mock drafts, Aug 30 – Sep 4 2026). Grades weight starting-lineup strength 50%,
+        top-five talent 30%, and value vs. market 20%. Standings blend that grade with each
+        manager's all-time power score. Ask again in January.
       </p>
 
     </div>
