@@ -8,6 +8,7 @@ const navLinks = [
   { to: '/calendar',   label: 'Calendar'   },
   { to: '/podcasts',   label: 'Podcasts'   },
   { to: '/book-club',  label: 'Book Club'  },
+  { to: '/draft',      label: 'Draft'      },
 ]
 
 export default function Navbar() {

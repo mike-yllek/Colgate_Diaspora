@@ -8,6 +8,7 @@ import Calendar from './pages/Calendar'
 import AddEvent from './pages/AddEvent'
 import Podcasts from './pages/Podcasts'
 import BookClub from './pages/BookClub'
+import Draft from './pages/Draft'
 import OhHellLobby from './pages/OhHell/index'
 import OhHellGame from './pages/OhHell/Game'
 import Note from './pages/Note'
@@ -25,6 +26,7 @@ function App() {
             <Route path="calendar/add-event" element={<AddEvent />} />
             <Route path="podcasts" element={<Podcasts />} />
             <Route path="book-club" element={<BookClub />} />
+            <Route path="draft" element={<Draft />} />
             <Route path="oh-hell" element={<OhHellLobby />} />
             <Route path="oh-hell/:roomId" element={<OhHellGame />} />
             <Route path="note" element={<Note />} />
