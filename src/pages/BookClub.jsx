@@ -66,14 +66,21 @@ const PAST_BOOKS = [
     link:     'https://www.goodreads.com/book/show/198123575-the-winner',
     description: null,
   },
+  {
+    title:    'I Have Some Questions for You',
+    author:   'Rebecca Makkai',
+    selector: 'Jack',
+    link:     'https://www.goodreads.com/book/show/61053829-i-have-some-questions-for-you',
+    description: null,
+  },
 ]
 
 const CURRENT_BOOK = {
-  title:    'I Have Some Questions for You',
-  author:   'Rebecca Makkai',
-  selector: 'Jack',
+  title:    'Startlement: New and Selected Poems',
+  author:   'Ada Limón',
+  selector: 'Kiri',
   year:     2026,
-  link:     'https://www.goodreads.com/book/show/61053829-i-have-some-questions-for-you',
+  link:     'https://www.goodreads.com/book/show/223443662-startlement',
   description: null,
 }
 
